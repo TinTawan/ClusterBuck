@@ -5198,13 +5198,13 @@ ConfigurableJoint:
   m_RotationDriveMode: 0
   m_AngularXDrive:
     serializedVersion: 4
-    positionSpring: 200
+    positionSpring: 500
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
   m_AngularYZDrive:
     serializedVersion: 4
-    positionSpring: 200
+    positionSpring: 500
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
@@ -5565,13 +5565,13 @@ ConfigurableJoint:
   m_RotationDriveMode: 0
   m_AngularXDrive:
     serializedVersion: 4
-    positionSpring: 200
+    positionSpring: 500
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
   m_AngularYZDrive:
     serializedVersion: 4
-    positionSpring: 200
+    positionSpring: 500
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
@@ -5731,7 +5731,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1518302935480525118}
-  - component: {fileID: 2724368762784200638}
+  - component: {fileID: 2724368762784200639}
   - component: {fileID: 2724368762784200637}
   - component: {fileID: 2724368762784200636}
   m_Layer: 0
@@ -5816,13 +5816,13 @@ ConfigurableJoint:
   m_RotationDriveMode: 0
   m_AngularXDrive:
     serializedVersion: 4
-    positionSpring: 200
+    positionSpring: 500
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
   m_AngularYZDrive:
     serializedVersion: 4
-    positionSpring: 200
+    positionSpring: 500
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
@@ -5870,8 +5870,8 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!65 &2724368762784200638
-BoxCollider:
+--- !u!136 &2724368762784200639
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -5888,9 +5888,11 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.08069192, y: 0.2827642, z: 0.08015682}
-  m_Center: {x: 0.0049665924, y: 0.1759753, z: -0.0025013483}
+  serializedVersion: 2
+  m_Radius: 0.043313503
+  m_Height: 0.30264705
+  m_Direction: 1
+  m_Center: {x: 0.006501439, y: 0.17321473, z: 0.000000001926688}
 --- !u!1 &2865256481085315458
 GameObject:
   m_ObjectHideFlags: 0
@@ -6304,13 +6306,13 @@ ConfigurableJoint:
   m_RotationDriveMode: 0
   m_AngularXDrive:
     serializedVersion: 4
-    positionSpring: 200
+    positionSpring: 500
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
   m_AngularYZDrive:
     serializedVersion: 4
-    positionSpring: 200
+    positionSpring: 500
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
@@ -6596,8 +6598,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.087085314, y: 0.1443018, z: 0.07169342}
-  m_Center: {x: -0.0017258136, y: 0.082578704, z: -0.0030551774}
+  m_Size: {x: 0.087085314, y: 0.15451069, z: 0.07836846}
+  m_Center: {x: -0.0017258137, y: 0.077474296, z: -0.006392657}
 --- !u!1 &4401351368639266131
 GameObject:
   m_ObjectHideFlags: 0
@@ -6778,8 +6780,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.087628454, y: 0.09736915, z: 0.101628914}
-  m_Center: {x: 0.0006063147, y: 0.08203832, z: -0.0086382795}
+  m_Size: {x: 0.087628454, y: 0.10585747, z: 0.101628914}
+  m_Center: {x: 0.0006063153, y: 0.077794336, z: -0.008638284}
 --- !u!1 &5043176691036053732
 GameObject:
   m_ObjectHideFlags: 0
@@ -7006,13 +7008,13 @@ ConfigurableJoint:
   m_RotationDriveMode: 0
   m_AngularXDrive:
     serializedVersion: 4
-    positionSpring: 200
+    positionSpring: 500
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
   m_AngularYZDrive:
     serializedVersion: 4
-    positionSpring: 200
+    positionSpring: 500
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
@@ -7060,8 +7062,8 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!65 &6211096469421579546
-BoxCollider:
+--- !u!136 &6211096469421579546
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -7078,9 +7080,11 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.08069192, y: 0.2827642, z: 0.08015682}
-  m_Center: {x: 0.0049665924, y: 0.1759753, z: -0.0025013483}
+  serializedVersion: 2
+  m_Radius: 0.04256051
+  m_Height: 0.30264705
+  m_Direction: 1
+  m_Center: {x: -0.0083934255, y: 0.17321524, z: 0.0000000017722687}
 --- !u!1 &6377549496354469498
 GameObject:
   m_ObjectHideFlags: 0
@@ -7175,13 +7179,13 @@ ConfigurableJoint:
   m_RotationDriveMode: 0
   m_AngularXDrive:
     serializedVersion: 4
-    positionSpring: 200
+    positionSpring: 500
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
   m_AngularYZDrive:
     serializedVersion: 4
-    positionSpring: 200
+    positionSpring: 500
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
@@ -7414,8 +7418,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.087085314, y: 0.1443018, z: 0.07169342}
-  m_Center: {x: -0.0017258136, y: 0.082578704, z: -0.0030551774}
+  m_Size: {x: 0.087085314, y: 0.15451069, z: 0.07836846}
+  m_Center: {x: -0.0017258137, y: 0.077474296, z: -0.006392657}
 --- !u!1 &6658246473481317180
 GameObject:
   m_ObjectHideFlags: 0
@@ -7724,13 +7728,13 @@ ConfigurableJoint:
   m_RotationDriveMode: 0
   m_AngularXDrive:
     serializedVersion: 4
-    positionSpring: 200
+    positionSpring: 500
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
   m_AngularYZDrive:
     serializedVersion: 4
-    positionSpring: 200
+    positionSpring: 500
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
@@ -7808,7 +7812,7 @@ Transform:
   m_GameObject: {fileID: 7009937879212891653}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.462, z: 1.641}
+  m_LocalPosition: {x: -0.47, y: 5.58, z: -1.87}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -8157,8 +8161,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.087628454, y: 0.09736915, z: 0.101628914}
-  m_Center: {x: 0.0006063147, y: 0.08203832, z: -0.0086382795}
+  m_Size: {x: 0.087628454, y: 0.10585747, z: 0.101628914}
+  m_Center: {x: 0.0006063153, y: 0.077794336, z: -0.008638284}
 --- !u!4 &8881279066039839398
 Transform:
   m_ObjectHideFlags: 0
@@ -8252,13 +8256,13 @@ ConfigurableJoint:
   m_RotationDriveMode: 0
   m_AngularXDrive:
     serializedVersion: 4
-    positionSpring: 200
+    positionSpring: 500
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
   m_AngularYZDrive:
     serializedVersion: 4
-    positionSpring: 200
+    positionSpring: 500
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
@@ -8325,8 +8329,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.28909516, y: 0.17541365, z: 0.20059422}
-  m_Center: {x: 8.885955e-16, y: 0.15770681, z: -0.009220624}
+  m_Size: {x: 0.28909516, y: 0.18555112, z: 0.20059422}
+  m_Center: {x: 9.351359e-16, y: 0.15263808, z: -0.009220623}
 --- !u!4 &8926776033105839319
 Transform:
   m_ObjectHideFlags: 0
@@ -8433,13 +8437,13 @@ ConfigurableJoint:
   m_RotationDriveMode: 0
   m_AngularXDrive:
     serializedVersion: 4
-    positionSpring: 200
+    positionSpring: 500
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
   m_AngularYZDrive:
     serializedVersion: 4
-    positionSpring: 200
+    positionSpring: 500
     positionDamper: 0
     maximumForce: 3.4028233e+38
     useAcceleration: 0
