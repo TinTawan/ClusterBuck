@@ -3,58 +3,60 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 public class PlayerScript : NetworkBehaviour
 {
     private Rigidbody rb;
-    private Animator animator;
+    private ConfigurableJoint rootJoint;
+
 
     [SerializeField] private float moveSpeed = 10f;
-
-    private Vector3 moveDir;
+    //private Vector3 moveDir;
+    private Vector2 moveInput;
+    [SerializeField] private float rotateSmooth = 0.1f;
+    float rotateSmoothVel;
 
     [SerializeField] private InputActionReference moveIAR;
+
+
+    private Quaternion startRootRotation;
 
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-        animator = GetComponent<Animator>();
+        rootJoint = GetComponent<ConfigurableJoint>();
 
     }
 
     private void Update()
     {
-        moveDir = moveIAR.action.ReadValue<Vector2>();
+        moveInput = moveIAR.action.ReadValue<Vector2>();
 
-        Animation();
     }
 
     private void FixedUpdate()
     {
-        rb.velocity = new Vector3(moveDir.x * moveSpeed, 0, moveDir.y * moveSpeed);
+        
+        PlayerMovement();
 
     }
 
-    void Animation()
+    void PlayerMovement()
     {
-        /*if(rb.velocity.magnitude <= 0.2)
-        {
-            animator.SetBool("isWalking", false);
-        }
-        else
-        {
-            animator.SetBool("isWalking", true);
-        }*/
+        Vector3 moveDir = new Vector3(moveInput.x, 0, moveInput.y);
 
+        if (moveDir != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(moveDir);
+            Quaternion newRotation = Quaternion.Euler(0, targetRotation.eulerAngles.y + 180, 0);
 
-        if(moveDir.magnitude >= 0.1)
-        {
-            animator.SetBool("isWalking", true);
-        }
-        else
-        {
-            animator.SetBool("isWalking", false);
+            rootJoint.targetRotation = Quaternion.Inverse(newRotation);
+
+            rb.velocity = moveDir * moveSpeed;
         }
     }
+ 
+    
 }
