@@ -10,17 +10,15 @@ public class PlayerScript : NetworkBehaviour
     private Rigidbody rb;
     private ConfigurableJoint rootJoint;
 
+    [SerializeField] private Transform cam;
 
     [SerializeField] private float moveSpeed = 10f;
     //private Vector3 moveDir;
     private Vector2 moveInput;
     [SerializeField] private float rotateSmooth = 0.1f;
-    float rotateSmoothVel;
 
     [SerializeField] private InputActionReference moveIAR;
 
-
-    private Quaternion startRootRotation;
 
 
     private void Start()
@@ -45,14 +43,30 @@ public class PlayerScript : NetworkBehaviour
 
     void PlayerMovement()
     {
-        Vector3 moveDir = new Vector3(moveInput.x, 0, moveInput.y);
+
+        Vector3 camForward = cam.right;
+        Vector3 camRight = cam.forward;
+        camForward.y = 0;
+        camRight.y = 0;
+
+        Vector3 forwardRel = moveInput.x * camForward;
+        Vector3 rightRel = moveInput.y * camRight;
+        Vector3 camMoveDir = forwardRel + rightRel;
+
+
+        Vector3 moveDir = new Vector3(camMoveDir.x, 0, camMoveDir.z);
 
         if (moveDir != Vector3.zero)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(moveDir);
-            Quaternion newRotation = Quaternion.Euler(0, targetRotation.eulerAngles.y + 180, 0);
+            /*Quaternion lookRot = Quaternion.LookRotation(moveDir);
+            Quaternion rotation = Quaternion.Euler(0, lookRot.eulerAngles.y + 180, 0);
 
-            rootJoint.targetRotation = Quaternion.Inverse(newRotation);
+            rootJoint.targetRotation = Quaternion.Inverse(rotation);*/
+
+
+
+
+
 
             rb.velocity = moveDir * moveSpeed;
         }
