@@ -4,6 +4,7 @@ using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
+using Unity.VisualScripting;
 
 public class PlayerScript : NetworkBehaviour
 {
@@ -61,8 +62,8 @@ public class PlayerScript : NetworkBehaviour
             Quaternion lookRot = Quaternion.LookRotation(moveDir);
             Quaternion rotation = Quaternion.Euler(0, lookRot.eulerAngles.y + 180, 0);
 
+            //Quaternion test = Quaternion.Lerp(lookRot, Quaternion.Euler(0, lookRot.eulerAngles.y + 180, 0), rotateSmooth * Time.deltaTime);
             rootJoint.targetRotation = Quaternion.Inverse(rotation);
-
 
             rb.velocity = moveDir * moveSpeed;
         }
