@@ -21,13 +21,38 @@ public class AnimatePlayer : MonoBehaviour
     {
         if(ps != null)
         {
-            if (ps.GetMoveInput() == Vector2.zero)
+            Vector2 moveVect = ps.GetMoveInput();
+
+            Debug.Log(moveVect);
+
+            if (moveVect == Vector2.zero)
             {
-                anim.SetBool("isWalking", false);
+                anim.SetBool("isIdle", true);
             }
             else
             {
-                anim.SetBool("isWalking", true);
+                anim.SetBool("isIdle", false);
+            }
+
+            if(moveVect.x >= 0.2f)
+            {
+                anim.SetFloat("xVal", 1);
+
+            }
+            if(moveVect.x <= -0.2f)
+            {
+                anim.SetFloat("xVal", -1);
+
+            }
+            if(moveVect.y >= 0.2f)
+            {
+                anim.SetFloat("yVal", 1);
+
+            }
+            if (moveVect.y <= -0.2f)
+            {
+                anim.SetFloat("yVal", -1);
+
             }
         }
         
