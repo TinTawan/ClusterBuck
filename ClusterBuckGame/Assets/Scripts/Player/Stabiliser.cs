@@ -5,7 +5,8 @@ using UnityEngine;
 public class Stabiliser : MonoBehaviour
 {
     private Rigidbody rb;
-    private ConfigurableJoint joint;
+    [SerializeField] private Rigidbody spineRB;
+    [SerializeField] private ConfigurableJoint joint;
 
     [SerializeField] bool activateForce;
 
@@ -14,7 +15,7 @@ public class Stabiliser : MonoBehaviour
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
-        joint = GetComponent<ConfigurableJoint>();
+        //joint = GetComponent<ConfigurableJoint>();
 
     }
 
@@ -22,10 +23,10 @@ public class Stabiliser : MonoBehaviour
     {
         if(activateForce)
         {
-            //rb.AddForce(upForce * forceVal * Time.deltaTime);
-            //rb.velocity = upForce * forceVal * Time.deltaTime;
+            spineRB.AddForce(Vector3.up * forceVal * Time.deltaTime);
 
-            rb.MovePosition(rb.position + Vector3.up * forceVal * Time.fixedDeltaTime);
+            //joint.targetVelocity = Vector3.up * forceVal;
+
         }
     }
 }
