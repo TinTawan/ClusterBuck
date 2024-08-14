@@ -69,5 +69,8 @@ public class PlayerScript : NetworkBehaviour
         }
     }
  
-    
+    public Vector2 GetMoveInput()
+    {
+        return moveInput;
+    }
 }
