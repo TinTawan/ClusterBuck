@@ -58,14 +58,10 @@ public class PlayerScript : NetworkBehaviour
 
         if (moveDir != Vector3.zero)
         {
-            /*Quaternion lookRot = Quaternion.LookRotation(moveDir);
+            Quaternion lookRot = Quaternion.LookRotation(moveDir);
             Quaternion rotation = Quaternion.Euler(0, lookRot.eulerAngles.y + 180, 0);
 
-            rootJoint.targetRotation = Quaternion.Inverse(rotation);*/
-
-
-
-
+            rootJoint.targetRotation = Quaternion.Inverse(rotation);
 
 
             rb.velocity = moveDir * moveSpeed;

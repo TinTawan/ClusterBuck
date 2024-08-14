@@ -194,7 +194,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 138512071}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.2050793, y: 0.5222758, z: -0.13104929, w: 0.81731063}
+  m_LocalRotation: {x: 0.20507932, y: 0.52227587, z: -0.1310493, w: 0.8173106}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1065,6 +1065,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.x
       value: -6.405
       objectReference: {fileID: 0}
+    - target: {fileID: 4749811321964812549, guid: 016420f5242b5cf409256bcf0b28569d,
+        type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 330585545}
     - target: {fileID: 4758610996169262105, guid: 016420f5242b5cf409256bcf0b28569d,
         type: 3}
       propertyPath: m_Mass
@@ -1398,7 +1403,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 32.376, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 3.047, y: 65.159, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
   m_ObjectHideFlags: 0
