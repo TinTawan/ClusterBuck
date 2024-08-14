@@ -11,8 +11,6 @@ public class JointScript : MonoBehaviour
     [SerializeField] private Transform targetJoint;
     [SerializeField] private Quaternion initRotation;
 
-    //[SerializeField] bool invertX, invertY, invertZ, swapXY, swapXZ, swapYZ;
-
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -63,7 +61,7 @@ public class JointScript : MonoBehaviour
         SetTargetRotation(joint, targetJoint.localRotation, initRotation, Space.Self);
     }
 
-
+    //rotate the joints to copy the animated model's movements
     void SetTargetRotation(ConfigurableJoint inJoint, Quaternion inTargetRot, Quaternion inInitRot, Space inSpace)
     {
         var right = inJoint.axis;
@@ -73,7 +71,7 @@ public class JointScript : MonoBehaviour
 
         Quaternion resultRot = Quaternion.Inverse(worldtoJointSpace);
 
-        if(inSpace == Space.World)
+        /*if(inSpace == Space.World)
         {
             resultRot *= inInitRot * Quaternion.Inverse(inTargetRot);
             
@@ -82,7 +80,9 @@ public class JointScript : MonoBehaviour
         {
             resultRot *= Quaternion.Inverse(inTargetRot) * inInitRot;
 
-        }
+        }*/
+
+        resultRot *= Quaternion.Inverse(inTargetRot) * inInitRot;
 
         resultRot *= worldtoJointSpace;
 

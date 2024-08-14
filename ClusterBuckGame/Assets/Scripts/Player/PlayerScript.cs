@@ -54,18 +54,30 @@ public class PlayerScript : NetworkBehaviour
         Vector3 rightRel = moveInput.y * camRight;
         Vector3 camMoveDir = forwardRel + rightRel;
 
-
         Vector3 moveDir = new Vector3(camMoveDir.x, 0, camMoveDir.z);
 
         if (moveDir != Vector3.zero)
         {
+            //                              ==== ==== 
+            //old code to rotate player in direction they walk (not using anymore)
             /*Quaternion lookRot = Quaternion.LookRotation(moveDir);
             Quaternion rotation = Quaternion.Euler(0, lookRot.eulerAngles.y + 180, 0);
 
             rootJoint.targetRotation = Quaternion.Inverse(rotation);*/
+            //                              ==== ====
 
+
+
+            //rotate the player so forward is the same as the camera's forward
+            Quaternion rotation = Quaternion.Euler(0, cam.localEulerAngles.y + 180, 0);
+            Quaternion invert = Quaternion.Inverse(rotation);
+            rootJoint.targetRotation = invert;
+
+
+            //move the player with given move speed
             rb.velocity = moveDir * moveSpeed;
         }
+
     }
  
     public Vector2 GetMoveInput()
