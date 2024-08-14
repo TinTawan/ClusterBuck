@@ -14,9 +14,7 @@ public class PlayerScript : NetworkBehaviour
     [SerializeField] private Transform cam;
 
     [SerializeField] private float moveSpeed = 10f;
-    //private Vector3 moveDir;
     private Vector2 moveInput;
-    [SerializeField] private float rotateSmooth = 0.1f;
 
     [SerializeField] private InputActionReference moveIAR;
 
@@ -37,7 +35,7 @@ public class PlayerScript : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        
+        if (!IsOwner) return;
         PlayerMovement();
 
     }
@@ -69,7 +67,7 @@ public class PlayerScript : NetworkBehaviour
 
 
             //rotate the player so forward is the same as the camera's forward
-            Quaternion rotation = Quaternion.Euler(0, cam.localEulerAngles.y + 180, 0);
+            Quaternion rotation = Quaternion.Euler(0, cam.eulerAngles.y + 180, 0);
             Quaternion invert = Quaternion.Inverse(rotation);
             rootJoint.targetRotation = invert;
 
