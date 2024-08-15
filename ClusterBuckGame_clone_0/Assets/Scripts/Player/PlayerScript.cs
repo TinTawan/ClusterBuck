@@ -7,6 +7,7 @@ using UnityEngine.Rendering;
 using Unity.VisualScripting;
 using Cinemachine;
 using UnityEngine.Windows;
+using Unity.Netcode.Components;
 
 public class PlayerScript : NetworkBehaviour
 {
@@ -15,6 +16,7 @@ public class PlayerScript : NetworkBehaviour
     private CinemachineInputProvider cinInputProvider;
 
     private Transform cam;
+
 
     [SerializeField] private float moveSpeed = 10f;
     private Vector2 moveInput;
@@ -38,22 +40,29 @@ public class PlayerScript : NetworkBehaviour
 
         rb = GetComponent<Rigidbody>();
         rootJoint = GetComponent<ConfigurableJoint>();
-        cinInputProvider = GetComponentInChildren<CinemachineInputProvider>();
-        //cam = GetComponentInChildren<Camera>().transform;
+        //cinInputProvider = GetComponentInChildren<CinemachineInputProvider>();
+        cinInputProvider = FindObjectOfType<CinemachineInputProvider>();
+        freeLookCam = FindObjectOfType<CinemachineFreeLook>();
 
-        if (IsOwner)
+        if (IsClient && IsOwner)
         {
-            //cam.GetComponent<CameraFollow>().LookToPlayer(this.transform);
-            //Camera.main.gameObject.SetActive(false);
-            //cam = transform.Find("PlayerCamera");
-            cam = GetComponentInChildren<Camera>().transform;
+            //cam = GetComponentInChildren<Camera>().transform;
+            cam = FindObjectOfType<Camera>().transform;
             cam.gameObject.SetActive(true);
 
-            listener.enabled = true;
-            freeLookCam.Priority = 2;
+            
             cinInputProvider.AutoEnableInputs = true;
             cinInputProvider.PlayerIndex = (int)NetworkManager.LocalClientId;
 
+            freeLookCam.Follow = transform;
+            freeLookCam.LookAt = transform;
+
+        }
+        else if (IsOwner)
+        {
+            listener.enabled = true;
+            freeLookCam.Priority = 2;
+            
         }
         else
         {
@@ -87,8 +96,17 @@ public class PlayerScript : NetworkBehaviour
             MoveServerRpc(moveInput);
             Debug.Log("MoveDir: " + (new Vector3(((moveInput.x * cam.right) + moveInput.y * cam.forward).x, 0, ((moveInput.x * cam.right) + moveInput.y * cam.forward).z))*moveSpeed);
         }*/
-        PlayerMovement(moveInput);
 
+        //PlayerMovement(moveInput);
+        //serverauth test
+        PlayerMovementServAuth(moveInput);
+
+    }
+
+    void PlayerMovementServAuth(Vector2 moveInput)
+    {
+        Debug.Log("cam rotation: " + cam.eulerAngles);
+        PlayerMovementServerRpc(moveInput, cam.transform.rotation);
     }
 
     void PlayerMovement(Vector2 input)
@@ -103,8 +121,6 @@ public class PlayerScript : NetworkBehaviour
         Vector3 rightRel = input.y * camForward;
         Vector3 camMoveDir = forwardRel + rightRel;
 
-        /*Vector3 camMoveDir = cam.TransformDirection(input);
-        //Vector3 camMoveDir = direction * input;*/
         Vector3 moveDir = new Vector3(camMoveDir.x, 0, camMoveDir.z);
 
         Debug.Log(moveDir);
@@ -150,7 +166,33 @@ public class PlayerScript : NetworkBehaviour
 
     }
 
-    void RotateRootBone(float input) 
+    [ServerRpc]
+    void PlayerMovementServerRpc(Vector2 moveInput, Quaternion camInput)
+    {
+        Vector3 camForward = camInput * Vector3.forward;
+        Vector3 camRight = camInput * Vector3.right;
+        camForward.y = 0;
+        camRight.y = 0;
+
+        Vector3 forwardRel = moveInput.x * camRight;
+        Vector3 rightRel = moveInput.y * camForward;
+        Vector3 camMoveDir = forwardRel + rightRel;
+
+        Vector3 moveDir = new Vector3(camMoveDir.x, 0, camMoveDir.z);
+
+        if (moveDir != Vector3.zero)
+        {
+            rotation = Quaternion.Euler(0, networkedYRotation.Value + 180, 0);
+            Quaternion invert = Quaternion.Inverse(rotation);
+            rootJoint.targetRotation = invert;
+
+
+            //move the player with given move speed
+            rb.velocity = moveDir * moveSpeed;
+        }
+    }
+
+    /*void RotateRootBone(float input) 
     {
         //rotate the player so forward is the same as the camera's forward
         rotation = Quaternion.Euler(0, input + 180, 0);
@@ -171,9 +213,9 @@ public class PlayerScript : NetworkBehaviour
         Vector3 rightRel = input.y * camRight;
         camMoveDir = forwardRel + rightRel;
         return camMoveDir;
-    }
+    }*/
 
-    [ServerRpc]
+    /*[ServerRpc]
     private void MoveServerRpc(Vector2 input)
     {
         PlayerMovement(input);
@@ -184,7 +226,7 @@ public class PlayerScript : NetworkBehaviour
     {
         Debug.Log("Client: " + NetworkManager.LocalClientId);
         RotateRootBone(input);
-    }
+    }*/
 
     /*[ServerRpc]
     private void CamLogicServerRpc(Vector2 input)

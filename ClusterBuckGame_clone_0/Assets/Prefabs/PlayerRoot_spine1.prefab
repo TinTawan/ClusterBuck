@@ -82,7 +82,7 @@ GameObject:
   - component: {fileID: 6666544162058358251}
   m_Layer: 6
   m_Name: PlayerRoot_spine1
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -301,7 +301,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3384843367
+  GlobalObjectIdHash: 3567893976
+  InScenePlacedSourceGlobalObjectIdHash: 0
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
@@ -323,6 +324,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 1.8
   moveIAR: {fileID: 5019093908031485279, guid: f7c15827751618f4795ce4e3c02c0820, type: 3}
+  freeLookCam: {fileID: 0}
+  listener: {fileID: 0}
+  spawnPosRange: 3
 --- !u!114 &4801454154919042737
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -335,6 +339,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  UseUnreliableDeltas: 0
   SyncPositionX: 1
   SyncPositionY: 1
   SyncPositionZ: 1
@@ -347,8 +352,8 @@ MonoBehaviour:
   PositionThreshold: 0.001
   RotAngleThreshold: 0.01
   ScaleThreshold: 0.01
-  UseQuaternionSynchronization: 0
-  UseQuaternionCompression: 0
+  UseQuaternionSynchronization: 1
+  UseQuaternionCompression: 1
   UseHalfFloatPrecision: 0
   InLocalSpace: 0
   Interpolate: 1
@@ -1995,7 +2000,7 @@ GameObject:
   - component: {fileID: 2062605085309869763}
   m_Layer: 6
   m_Name: hip.l
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2276,7 +2281,7 @@ GameObject:
   - component: {fileID: 7828482437556811812}
   m_Layer: 6
   m_Name: hip.r
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3613,7 +3618,7 @@ GameObject:
   - component: {fileID: 7330878848358311710}
   m_Layer: 6
   m_Name: spine2
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
