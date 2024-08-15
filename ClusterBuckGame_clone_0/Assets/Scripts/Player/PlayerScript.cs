@@ -32,8 +32,8 @@ public class PlayerScript : NetworkBehaviour
     [SerializeField] private float spawnPosRange = 3f;
 
     private NetworkVariable<float> networkedYRotation = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    private NetworkVariable<float> networkXSens = new NetworkVariable<float>(350, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    private NetworkVariable<float> networkYSens = new NetworkVariable<float>(0.8f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    private NetworkVariable<float> networkXSens = new NetworkVariable<float>(2500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    private NetworkVariable<float> networkYSens = new NetworkVariable<float>(5f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     public override void OnNetworkSpawn()
     {
@@ -41,13 +41,11 @@ public class PlayerScript : NetworkBehaviour
 
         rb = GetComponent<Rigidbody>();
         rootJoint = GetComponent<ConfigurableJoint>();
-        //cinInputProvider = GetComponentInChildren<CinemachineInputProvider>();
         cinInputProvider = FindObjectOfType<CinemachineInputProvider>();
         freeLookCam = FindObjectOfType<CinemachineFreeLook>();
 
         if (IsClient && IsOwner)
         {
-            //cam = GetComponentInChildren<Camera>().transform;
             cam = FindObjectOfType<Camera>().transform;
             cam.gameObject.SetActive(true);
 
@@ -109,7 +107,6 @@ public class PlayerScript : NetworkBehaviour
 
     void PlayerMovementServAuth(Vector2 moveInput)
     {
-        Debug.Log("cam rotation: " + cam.eulerAngles);
         PlayerMovementServerRpc(moveInput, cam.transform.rotation);
     }
 

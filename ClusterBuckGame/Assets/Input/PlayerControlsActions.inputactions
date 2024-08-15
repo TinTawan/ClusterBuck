@@ -15,7 +15,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "MouseLook",
+                    "name": "Look",
                     "type": "Value",
                     "id": "b3a68f41-a91e-44ad-b888-298a24a47094",
                     "expectedControlType": "Vector2",
@@ -96,9 +96,9 @@
                     "id": "1322da92-f914-49d3-9cbe-abc18a7c5f14",
                     "path": "<Mouse>/delta",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "DeltaTime",
                     "groups": "Keyboard",
-                    "action": "MouseLook",
+                    "action": "Look",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -107,9 +107,9 @@
                     "id": "7cd369b2-a388-49a8-aa48-a423e4974a88",
                     "path": "<Gamepad>/rightStick",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "DeltaTime",
                     "groups": "Controller",
-                    "action": "MouseLook",
+                    "action": "Look",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
