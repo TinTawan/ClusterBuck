@@ -32,7 +32,8 @@ public class PlayerScript : NetworkBehaviour
     [SerializeField] private float spawnPosRange = 3f;
 
     private NetworkVariable<float> networkedYRotation = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
-    
+    private NetworkVariable<float> networkXSens = new NetworkVariable<float>(350, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    private NetworkVariable<float> networkYSens = new NetworkVariable<float>(0.8f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
     public override void OnNetworkSpawn()
     {
@@ -70,6 +71,9 @@ public class PlayerScript : NetworkBehaviour
         }
 
         transform.position = new Vector3(Random.Range(spawnPosRange, -spawnPosRange), 0, (Random.Range(spawnPosRange, -spawnPosRange)));
+
+        freeLookCam.m_XAxis.m_MaxSpeed = networkXSens.Value;
+        freeLookCam.m_YAxis.m_MaxSpeed = networkYSens.Value;
     }
 
     private void FixedUpdate()
