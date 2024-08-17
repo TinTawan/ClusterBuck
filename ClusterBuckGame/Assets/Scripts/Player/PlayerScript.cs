@@ -84,6 +84,7 @@ public class PlayerScript : NetworkBehaviour
         playerControlsActions = new PlayerControlsActions();
         playerControlsActions.General.Enable();
 
+        //cause callbacks when holding and then releasing the attack button
         playerControlsActions.General.Attack.performed += HoldAttack;
         playerControlsActions.General.Attack.canceled += ReleaseAttack;
 
@@ -99,7 +100,8 @@ public class PlayerScript : NetworkBehaviour
 
     private void HoldAttack(InputAction.CallbackContext context)
     {
-        isChargingAttack = true;
+        //isChargingAttack = true;
+        isChargingAttack = context.ReadValueAsButton();
     }
 
     private void ReleaseAttack(InputAction.CallbackContext context)
@@ -140,7 +142,19 @@ public class PlayerScript : NetworkBehaviour
         }*/
 
         PlayerMovementServAuth(moveInput);
-        PlayerAttackingServAuth(-rootJoint.transform.forward);
+        /*if(isChargingAttack)
+        {
+            PlayerAttackingServAuth(-rootJoint.transform.forward);
+        }*/
+
+        if (IsServer && IsLocalPlayer)
+        {
+            PlayerAttack(-rootJoint.transform.forward, isChargingAttack);
+        }
+        if (IsClient && IsLocalPlayer)
+        {
+            PlayerAttackServerRpc(-rootJoint.transform.forward, isChargingAttack);
+        }
     }
 
     void PlayerMovementServAuth(Vector2 moveInput)
@@ -175,7 +189,7 @@ public class PlayerScript : NetworkBehaviour
     }
 
 
-    private void PlayerAttackingServAuth(Vector3 moveInput)
+    /*private void PlayerAttackingServAuth(Vector3 moveInput)
     {
         PlayerAttackingServerRpc(moveInput);
     }
@@ -183,7 +197,7 @@ public class PlayerScript : NetworkBehaviour
     [ServerRpc]
     private void PlayerAttackingServerRpc(Vector3 inputMoveDir)
     {
-        if(isChargingAttack)
+        if (isChargingAttack)
         {
             //moveSpeed = runSpeed;
 
@@ -203,6 +217,34 @@ public class PlayerScript : NetworkBehaviour
             rb.velocity = inputMoveDir * runSpeed;
         }
 
+    }*/
+
+    private void PlayerAttack(Vector3 moveInput, bool attacking)
+    {
+        if (attacking)
+        {
+
+            //charging up
+            if (networkChargeLevel.Value < maxCharge)
+            {
+                networkChargeLevel.Value += 1;
+                Debug.Log(networkChargeLevel.Value);
+            }
+
+            //reached full charge but still holding
+            if (networkChargeLevel.Value == maxCharge)
+            {
+                Debug.Log("Max charge");
+            }
+
+            rb.velocity = moveInput * runSpeed;
+        }
+    }
+
+    [ServerRpc]
+    private void PlayerAttackServerRpc(Vector3 moveInput, bool attacking)
+    {
+        PlayerAttack(moveInput, attacking);
     }
 
     public Vector2 GetMoveInput()
