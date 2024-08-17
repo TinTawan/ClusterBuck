@@ -1,13 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode.Components;
+using UnityEditor.Rendering;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 
 public class AnimatePlayer : NetworkAnimator
 {
     private PlayerScript ps;
     private Animator anim;
+
+    [SerializeField] float lerpSensitivity = 1f;
 
 
     protected override bool OnIsServerAuthoritative()
@@ -31,22 +36,18 @@ public class AnimatePlayer : NetworkAnimator
             //get the player new input system movement
             Vector2 moveVect = ps.GetMoveInput();
 
-            //set idle and 0 the x and y values when player is still
-            if (moveVect == Vector2.zero)
+            //0 the x and y values to play the idle animation from the blend tree
+            if (moveVect.x == 0)
             {
-                anim.SetBool("isIdle", true);
-                //anim.SetFloat("idleBool", 1);
                 anim.SetFloat("xVal", 0);
-                anim.SetFloat("yVal", 0);
             }
-            else
+            if (moveVect.y == 0)
             {
-                anim.SetBool("isIdle", false);
-                //anim.SetFloat("idleBool", 0);
+                anim.SetFloat("yVal", 0);
             }
 
             //set x and y values for blend tree to use the 4 directional movement animations
-            if(moveVect.x >= 0.2f)
+            if (moveVect.x >= 0.2f)
             {
                 anim.SetFloat("xVal", 1);
 
@@ -66,7 +67,15 @@ public class AnimatePlayer : NetworkAnimator
                 anim.SetFloat("yVal", -1);
 
             }
+
+            
+           
+            
+            //if charge attack
+            //anim.SetFloat("xVal", 0);
+            //anim.SetFloat("yVal", 2);
         }
-        
+
     }
+
 }

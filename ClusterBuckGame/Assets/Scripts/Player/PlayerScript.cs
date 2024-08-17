@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.InputSystem;
-using UnityEngine.Rendering;
-using Unity.VisualScripting;
 using Cinemachine;
 using UnityEngine.Windows;
 using Unity.Netcode.Components;
+using Unity.VisualScripting;
 
 public class PlayerScript : NetworkBehaviour
 {
@@ -21,13 +20,15 @@ public class PlayerScript : NetworkBehaviour
     [SerializeField] private float moveSpeed = 10f;
     private Vector2 moveInput;
 
+    private PlayerInput playerInput;
+    private PlayerControlsActions playerControlsActions;
     [SerializeField] private InputActionReference moveIAR;
 
     [SerializeField] private CinemachineFreeLook freeLookCam;
     [SerializeField] private AudioListener listener;
 
-    Quaternion rotation = Quaternion.identity;
-    Vector3 moveDir = new Vector3(), camMoveDir;
+    //Quaternion rotation = Quaternion.identity;
+
 
     [SerializeField] private float spawnPosRange = 3f;
 
@@ -35,14 +36,20 @@ public class PlayerScript : NetworkBehaviour
     private NetworkVariable<float> networkXSens = new NetworkVariable<float>(2500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     private NetworkVariable<float> networkYSens = new NetworkVariable<float>(5f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
+
+    private bool isChargingAttack;
+    int x = 0;
+
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
 
+        //assign components
         rb = GetComponent<Rigidbody>();
         rootJoint = GetComponent<ConfigurableJoint>();
         cinInputProvider = FindObjectOfType<CinemachineInputProvider>();
         freeLookCam = FindObjectOfType<CinemachineFreeLook>();
+        playerInput = GetComponent<PlayerInput>();
 
         if (IsClient && IsOwner)
         {
@@ -68,10 +75,51 @@ public class PlayerScript : NetworkBehaviour
             freeLookCam.Priority = 0;
         }
 
+        //setup player controls actions
+        playerControlsActions = new PlayerControlsActions();
+        playerControlsActions.General.Enable();
+
+        playerControlsActions.General.Attack.performed += HoldAttack;
+        playerControlsActions.General.Attack.canceled += ReleaseAttack;
+
+        //set randomised spawn position around the origin
         transform.position = new Vector3(Random.Range(spawnPosRange, -spawnPosRange), 0, (Random.Range(spawnPosRange, -spawnPosRange)));
 
+        //set the freelookcam sensitivity to the networked variable
         freeLookCam.m_XAxis.m_MaxSpeed = networkXSens.Value;
         freeLookCam.m_YAxis.m_MaxSpeed = networkYSens.Value;
+    }
+
+    private void HoldAttack(InputAction.CallbackContext context)
+    {
+        isChargingAttack = true;
+    }
+
+    private void ReleaseAttack(InputAction.CallbackContext context)
+    {
+        isChargingAttack = false;
+        x = 0;
+        Debug.Log("Release Attack");
+    }
+
+    void TestCharging()
+    {
+        if(isChargingAttack)
+        {
+            
+            if(x < 50)
+            {
+                x += 1;
+                Debug.Log(x);
+            }
+            
+            if (x == 50)
+            {
+                Debug.Log("Max charge");
+            }
+            
+            
+        }
     }
 
     private void FixedUpdate()
@@ -81,7 +129,8 @@ public class PlayerScript : NetworkBehaviour
             return;
         }
 
-        moveInput = moveIAR.action.ReadValue<Vector2>();
+        //read the vector 2 from the General action controls
+        moveInput = playerControlsActions.General.Move.ReadValue<Vector2>();
 
         networkedYRotation.Value = cam.eulerAngles.y;
 
@@ -99,10 +148,8 @@ public class PlayerScript : NetworkBehaviour
             Debug.Log("MoveDir: " + (new Vector3(((moveInput.x * cam.right) + moveInput.y * cam.forward).x, 0, ((moveInput.x * cam.right) + moveInput.y * cam.forward).z))*moveSpeed);
         }*/
 
-        //PlayerMovement(moveInput);
-        //serverauth test
         PlayerMovementServAuth(moveInput);
-
+        TestCharging();
     }
 
     void PlayerMovementServAuth(Vector2 moveInput)
@@ -110,6 +157,52 @@ public class PlayerScript : NetworkBehaviour
         PlayerMovementServerRpc(moveInput, cam.transform.rotation);
     }
 
+    [ServerRpc]
+    void PlayerMovementServerRpc(Vector2 moveInput, Quaternion camInput)
+    {
+        Vector3 camForward = camInput * Vector3.forward;
+        Vector3 camRight = camInput * Vector3.right;
+        camForward.y = 0;
+        camRight.y = 0;
+
+        Vector3 forwardRel = moveInput.x * camRight;
+        Vector3 rightRel = moveInput.y * camForward;
+        Vector3 camMoveDir = forwardRel + rightRel;
+
+        Vector3 moveDir = new Vector3(camMoveDir.x, 0, camMoveDir.z);
+
+        if (moveDir != Vector3.zero)
+        {
+            Quaternion rotation = Quaternion.Euler(0, networkedYRotation.Value + 180, 0);
+            Quaternion invert = Quaternion.Inverse(rotation);
+            rootJoint.targetRotation = invert;
+
+
+            //move the player with given move speed
+            rb.velocity = moveDir * moveSpeed;
+        }
+    }
+
+
+
+    public Vector2 GetMoveInput()
+    {
+        return moveInput;
+    }
+
+    public bool GetIsChargingAttack()
+    {
+        return isChargingAttack;
+    }
+
+
+
+
+
+
+
+
+    //keeping in case
     void PlayerMovement(Vector2 input)
     {
 
@@ -156,7 +249,7 @@ public class PlayerScript : NetworkBehaviour
 
             //RotateRootBoneServerRpc(networkedYRotation.Value);
 
-            rotation = Quaternion.Euler(0, networkedYRotation.Value + 180, 0);
+            Quaternion rotation = Quaternion.Euler(0, networkedYRotation.Value + 180, 0);
             Quaternion invert = Quaternion.Inverse(rotation);
             rootJoint.targetRotation = invert;
 
@@ -165,80 +258,5 @@ public class PlayerScript : NetworkBehaviour
             rb.velocity = moveDir * moveSpeed;
         }
 
-    }
-
-    [ServerRpc]
-    void PlayerMovementServerRpc(Vector2 moveInput, Quaternion camInput)
-    {
-        Vector3 camForward = camInput * Vector3.forward;
-        Vector3 camRight = camInput * Vector3.right;
-        camForward.y = 0;
-        camRight.y = 0;
-
-        Vector3 forwardRel = moveInput.x * camRight;
-        Vector3 rightRel = moveInput.y * camForward;
-        Vector3 camMoveDir = forwardRel + rightRel;
-
-        Vector3 moveDir = new Vector3(camMoveDir.x, 0, camMoveDir.z);
-
-        if (moveDir != Vector3.zero)
-        {
-            rotation = Quaternion.Euler(0, networkedYRotation.Value + 180, 0);
-            Quaternion invert = Quaternion.Inverse(rotation);
-            rootJoint.targetRotation = invert;
-
-
-            //move the player with given move speed
-            rb.velocity = moveDir * moveSpeed;
-        }
-    }
-
-    /*void RotateRootBone(float input) 
-    {
-        //rotate the player so forward is the same as the camera's forward
-        rotation = Quaternion.Euler(0, input + 180, 0);
-        Quaternion invert = Quaternion.Inverse(rotation);
-        rootJoint.targetRotation = invert;
-
-        
-    }
-
-    Vector3 CamLogic(Vector2 input)
-    {
-        Vector3 camForward = cam.right;
-        Vector3 camRight = cam.forward;
-        camForward.y = 0;
-        camRight.y = 0;
-
-        Vector3 forwardRel = input.x * camForward;
-        Vector3 rightRel = input.y * camRight;
-        camMoveDir = forwardRel + rightRel;
-        return camMoveDir;
-    }*/
-
-    /*[ServerRpc]
-    private void MoveServerRpc(Vector2 input)
-    {
-        PlayerMovement(input);
-    }
-
-    [ServerRpc]
-    private void RotateRootBoneServerRpc(float input)
-    {
-        Debug.Log("Client: " + NetworkManager.LocalClientId);
-        RotateRootBone(input);
-    }*/
-
-    /*[ServerRpc]
-    private void CamLogicServerRpc(Vector2 input)
-    {
-        camMoveDir = CamLogic(input);
-    }*/
-
-
-
-    public Vector2 GetMoveInput()
-    {
-        return moveInput;
     }
 }
