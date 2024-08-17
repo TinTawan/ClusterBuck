@@ -17,12 +17,14 @@ public class PlayerScript : NetworkBehaviour
     private Transform cam;
 
 
-    [SerializeField] private float moveSpeed = 10f;
+    [SerializeField] private float normalMoveSpeed = 10f, runSpeed = 12f;
+    private float moveSpeed;
     private Vector2 moveInput;
+    private Vector3 moveDir;
 
     private PlayerInput playerInput;
     private PlayerControlsActions playerControlsActions;
-    [SerializeField] private InputActionReference moveIAR;
+    //[SerializeField] private InputActionReference moveIAR;
 
     [SerializeField] private CinemachineFreeLook freeLookCam;
     [SerializeField] private AudioListener listener;
@@ -36,9 +38,12 @@ public class PlayerScript : NetworkBehaviour
     private NetworkVariable<float> networkXSens = new NetworkVariable<float>(2500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     private NetworkVariable<float> networkYSens = new NetworkVariable<float>(5f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
+    private NetworkVariable<float> networkChargeLevel = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+
 
     private bool isChargingAttack;
-    int x = 0;
+    int chargeLevel = 0;
+    float maxCharge = 50;
 
     public override void OnNetworkSpawn()
     {
@@ -88,6 +93,8 @@ public class PlayerScript : NetworkBehaviour
         //set the freelookcam sensitivity to the networked variable
         freeLookCam.m_XAxis.m_MaxSpeed = networkXSens.Value;
         freeLookCam.m_YAxis.m_MaxSpeed = networkYSens.Value;
+
+        moveSpeed = normalMoveSpeed;
     }
 
     private void HoldAttack(InputAction.CallbackContext context)
@@ -98,29 +105,13 @@ public class PlayerScript : NetworkBehaviour
     private void ReleaseAttack(InputAction.CallbackContext context)
     {
         isChargingAttack = false;
-        x = 0;
+
+        moveSpeed = normalMoveSpeed;
+
+        networkChargeLevel.Value = 0;
         Debug.Log("Release Attack");
     }
 
-    void TestCharging()
-    {
-        if(isChargingAttack)
-        {
-            
-            if(x < 50)
-            {
-                x += 1;
-                Debug.Log(x);
-            }
-            
-            if (x == 50)
-            {
-                Debug.Log("Max charge");
-            }
-            
-            
-        }
-    }
 
     private void FixedUpdate()
     {
@@ -149,7 +140,7 @@ public class PlayerScript : NetworkBehaviour
         }*/
 
         PlayerMovementServAuth(moveInput);
-        TestCharging();
+        PlayerAttackingServAuth(-rootJoint.transform.forward);
     }
 
     void PlayerMovementServAuth(Vector2 moveInput)
@@ -169,7 +160,7 @@ public class PlayerScript : NetworkBehaviour
         Vector3 rightRel = moveInput.y * camForward;
         Vector3 camMoveDir = forwardRel + rightRel;
 
-        Vector3 moveDir = new Vector3(camMoveDir.x, 0, camMoveDir.z);
+        moveDir = new Vector3(camMoveDir.x, 0, camMoveDir.z);
 
         if (moveDir != Vector3.zero)
         {
@@ -184,6 +175,35 @@ public class PlayerScript : NetworkBehaviour
     }
 
 
+    private void PlayerAttackingServAuth(Vector3 moveInput)
+    {
+        PlayerAttackingServerRpc(moveInput);
+    }
+
+    [ServerRpc]
+    private void PlayerAttackingServerRpc(Vector3 inputMoveDir)
+    {
+        if(isChargingAttack)
+        {
+            //moveSpeed = runSpeed;
+
+            //charging up
+            if (networkChargeLevel.Value < maxCharge)
+            {
+                networkChargeLevel.Value += 1;
+                Debug.Log(networkChargeLevel.Value);
+            }
+
+            //reached full charge but still holding
+            if (networkChargeLevel.Value == maxCharge)
+            {
+                Debug.Log("Max charge");
+            }
+
+            rb.velocity = inputMoveDir * runSpeed;
+        }
+
+    }
 
     public Vector2 GetMoveInput()
     {

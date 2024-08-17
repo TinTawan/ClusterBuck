@@ -8,7 +8,7 @@ AnimatorState:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Walking Blend
-  m_Speed: 1.3
+  m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
   m_StateMachineBehaviours: []
@@ -142,7 +142,7 @@ BlendTree:
     m_Motion: {fileID: 7400000, guid: fe70a613fd8947b4a990b8cf077aee6a, type: 2}
     m_Threshold: 0
     m_Position: {x: 0, y: 1}
-    m_TimeScale: 1
+    m_TimeScale: 1.3
     m_CycleOffset: 0
     m_DirectBlendParameter: xVal
     m_Mirror: 0
@@ -150,7 +150,7 @@ BlendTree:
     m_Motion: {fileID: 7400000, guid: 467246cccb1d3384aa0a11ffabacba22, type: 2}
     m_Threshold: 0.2
     m_Position: {x: 1, y: 0}
-    m_TimeScale: 1
+    m_TimeScale: 1.3
     m_CycleOffset: 0
     m_DirectBlendParameter: xVal
     m_Mirror: 0
@@ -158,7 +158,7 @@ BlendTree:
     m_Motion: {fileID: 7400000, guid: e095d87a3f9140c43ad685698275ca30, type: 2}
     m_Threshold: 0.4
     m_Position: {x: 0, y: -1}
-    m_TimeScale: 1
+    m_TimeScale: 1.3
     m_CycleOffset: 0
     m_DirectBlendParameter: xVal
     m_Mirror: 0
@@ -166,7 +166,7 @@ BlendTree:
     m_Motion: {fileID: 7400000, guid: 03701e119694ab34a8c67591f6f10410, type: 2}
     m_Threshold: 0.6
     m_Position: {x: -1, y: 0}
-    m_TimeScale: 1
+    m_TimeScale: 1.3
     m_CycleOffset: 0
     m_DirectBlendParameter: xVal
     m_Mirror: 0
@@ -174,7 +174,7 @@ BlendTree:
     m_Motion: {fileID: 7400000, guid: 0b5e57f3d23571544ba9dd48417c9bbd, type: 2}
     m_Threshold: 0.8
     m_Position: {x: 0, y: 0}
-    m_TimeScale: 1
+    m_TimeScale: 1.1
     m_CycleOffset: 0
     m_DirectBlendParameter: xVal
     m_Mirror: 0
@@ -182,7 +182,7 @@ BlendTree:
     m_Motion: {fileID: 7400000, guid: 7f346b3156a0d0345a8625994e82ab29, type: 2}
     m_Threshold: 1
     m_Position: {x: 0, y: 2}
-    m_TimeScale: 1
+    m_TimeScale: 1.2
     m_CycleOffset: 0
     m_DirectBlendParameter: xVal
     m_Mirror: 0
@@ -202,30 +202,18 @@ AnimatorController:
   m_Name: Char_Anim
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: isIdle
-    m_Type: 4
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
   - m_Name: xVal
     m_Type: 1
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   - m_Name: yVal
     m_Type: 1
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
-  - m_Name: idleBool
-    m_Type: 1
-    m_DefaultFloat: 0
-    m_DefaultInt: 0
-    m_DefaultBool: 0
-    m_Controller: {fileID: 9100000}
+    m_Controller: {fileID: 0}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer

@@ -301,7 +301,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 842976253
+  GlobalObjectIdHash: 2803551146
   InScenePlacedSourceGlobalObjectIdHash: 2803551146
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
@@ -322,8 +322,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aff179cefc114ae4f8ab2090bfc93e1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 1.8
-  moveIAR: {fileID: 5019093908031485279, guid: f7c15827751618f4795ce4e3c02c0820, type: 3}
+  normalMoveSpeed: 2
+  runSpeed: 3.5
   freeLookCam: {fileID: 0}
   listener: {fileID: 0}
   spawnPosRange: 3

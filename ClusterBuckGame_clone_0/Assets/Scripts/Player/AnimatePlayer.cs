@@ -12,8 +12,6 @@ public class AnimatePlayer : NetworkAnimator
     private PlayerScript ps;
     private Animator anim;
 
-    [SerializeField] float lerpSensitivity = 1f;
-
 
     protected override bool OnIsServerAuthoritative()
     {
@@ -74,6 +72,12 @@ public class AnimatePlayer : NetworkAnimator
             //if charge attack
             //anim.SetFloat("xVal", 0);
             //anim.SetFloat("yVal", 2);
+            bool charging = ps.GetIsChargingAttack();
+            if(charging)
+            {
+                anim.SetFloat("yVal", 2);
+                anim.SetFloat("xVal", 0);
+            }
         }
 
     }
