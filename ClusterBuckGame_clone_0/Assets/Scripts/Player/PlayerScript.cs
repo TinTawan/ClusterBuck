@@ -17,8 +17,9 @@ public class PlayerScript : NetworkBehaviour
     private Transform cam;
 
 
-    [SerializeField] private float normalMoveSpeed = 10f, runSpeed = 12f;
-    private float moveSpeed;
+    private float moveSpeed = 2f;
+    [SerializeField] private float runSpeed = 3.5f, walkSpeed = 2f;
+
     private Vector2 moveInput;
     private Vector3 moveDir;
 
@@ -38,11 +39,18 @@ public class PlayerScript : NetworkBehaviour
     private NetworkVariable<float> networkXSens = new NetworkVariable<float>(2500, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
     private NetworkVariable<float> networkYSens = new NetworkVariable<float>(5f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
-    private NetworkVariable<float> networkChargeLevel = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    private NetworkVariable<float> networkChargeLevel = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+
+    private NetworkVariable<Vector2> networkMoveDirection = new NetworkVariable<Vector2>(Vector2.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+    private NetworkVariable<Vector3> networkAttackDirection = new NetworkVariable<Vector3>(Vector3.zero, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    //private NetworkVariable<float> networkRunSpeed = new NetworkVariable<float>(1f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+    private NetworkVariable<float> networkMoveSpeed = new NetworkVariable<float>(2f, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
 
 
     private bool isChargingAttack;
-    int chargeLevel = 0;
+    //int chargeLevel = 0;
     float maxCharge = 50;
 
     public override void OnNetworkSpawn()
@@ -55,6 +63,18 @@ public class PlayerScript : NetworkBehaviour
         cinInputProvider = FindObjectOfType<CinemachineInputProvider>();
         freeLookCam = FindObjectOfType<CinemachineFreeLook>();
         playerInput = GetComponent<PlayerInput>();
+        listener = FindObjectOfType<Camera>().GetComponent<AudioListener>();
+
+        playerInput.camera = FindObjectOfType<Camera>();
+
+        /*if(IsClient && !IsServer)
+        {
+            NetworkManager.StartClient();
+        }
+        if(IsClient && IsServer) 
+        {
+            NetworkManager.StartHost();
+        }*/
 
         if (IsClient && IsOwner)
         {
@@ -95,23 +115,33 @@ public class PlayerScript : NetworkBehaviour
         freeLookCam.m_XAxis.m_MaxSpeed = networkXSens.Value;
         freeLookCam.m_YAxis.m_MaxSpeed = networkYSens.Value;
 
-        moveSpeed = normalMoveSpeed;
+        moveSpeed = walkSpeed;
+        //networkRunSpeed.Value = runSpeed;
+        networkMoveSpeed.Value = moveSpeed;
+
     }
 
     private void HoldAttack(InputAction.CallbackContext context)
     {
-        //isChargingAttack = true;
         isChargingAttack = context.ReadValueAsButton();
+
+        //networkMoveSpeed.Value = networkRunSpeed.Value;
+        SetMoveSpeed_ServerRpc(runSpeed);
     }
 
     private void ReleaseAttack(InputAction.CallbackContext context)
     {
         isChargingAttack = false;
+        //networkMoveSpeed.Value = walkSpeed;
+        SetMoveSpeed_ServerRpc(walkSpeed);
 
-        moveSpeed = normalMoveSpeed;
 
-        networkChargeLevel.Value = 0;
+        //reset network var for charge level to 0
+        //networkChargeLevel.Value = 0;
+        IncrementChargeLevel_ServerRpc(-networkChargeLevel.Value);
         Debug.Log("Release Attack");
+
+        
     }
 
 
@@ -126,44 +156,38 @@ public class PlayerScript : NetworkBehaviour
         moveInput = playerControlsActions.General.Move.ReadValue<Vector2>();
 
         networkedYRotation.Value = cam.eulerAngles.y;
+        //networkMoveDirection.Value = moveInput;
+        //networkAttackDirection.Value = -rootJoint.transform.forward;
+        //SetAttackDirectionServerRpc(-rootJoint.transform.forward);
 
-        /*//check if player or server
+        //check if player or server
         if (IsServer && IsLocalPlayer)
         {
-            //move if server
-            PlayerMovement(moveInput);
-            //Debug.Log("Host: " + NetworkManager.LocalClientId);
-        }
-        else if(IsClient && IsLocalPlayer)
-        {
-            //request move if player
-            MoveServerRpc(moveInput);
-            Debug.Log("MoveDir: " + (new Vector3(((moveInput.x * cam.right) + moveInput.y * cam.forward).x, 0, ((moveInput.x * cam.right) + moveInput.y * cam.forward).z))*moveSpeed);
-        }*/
+            networkMoveDirection.Value = moveInput;
+            networkAttackDirection.Value = -rootJoint.transform.forward;
 
-        PlayerMovementServAuth(moveInput);
-        /*if(isChargingAttack)
+        }
+        else if (IsClient && IsLocalPlayer)
         {
-            PlayerAttackingServAuth(-rootJoint.transform.forward);
-        }*/
 
-        if (IsServer && IsLocalPlayer)
-        {
-            PlayerAttack(-rootJoint.transform.forward, isChargingAttack);
+            SetAttackDirection_ServerRpc(-rootJoint.transform.forward);
+            SetMoveDir_ServerRpc(moveInput);
         }
-        if (IsClient && IsLocalPlayer)
-        {
-            PlayerAttackServerRpc(-rootJoint.transform.forward, isChargingAttack);
-        }
+
+        PlayerMovementServAuth();
+        PlayerAttackingServAuth();
+
+       
     }
 
-    void PlayerMovementServAuth(Vector2 moveInput)
+
+    void PlayerMovementServAuth()
     {
-        PlayerMovementServerRpc(moveInput, cam.transform.rotation);
+        PlayerMovement_ServerRpc(networkMoveDirection.Value, cam.transform.rotation);
     }
 
     [ServerRpc]
-    void PlayerMovementServerRpc(Vector2 moveInput, Quaternion camInput)
+    void PlayerMovement_ServerRpc(Vector2 moveInput, Quaternion camInput)
     {
         Vector3 camForward = camInput * Vector3.forward;
         Vector3 camRight = camInput * Vector3.right;
@@ -184,27 +208,49 @@ public class PlayerScript : NetworkBehaviour
 
 
             //move the player with given move speed
+            //rb.velocity = moveDir * networkMoveSpeed.Value;
             rb.velocity = moveDir * moveSpeed;
+
+            /*if(isChargingAttack)
+            {
+                rb.velocity = moveDir * networkRunSpeed.Value;
+            }
+            else
+            {
+                rb.velocity = moveDir * moveSpeed;
+            }*/
         }
     }
 
-
-    /*private void PlayerAttackingServAuth(Vector3 moveInput)
+    [ServerRpc(RequireOwnership = false)]
+    void SetMoveSpeed_ServerRpc(float speed)
     {
-        PlayerAttackingServerRpc(moveInput);
+        networkMoveSpeed.Value = speed;
+    }
+    [ServerRpc(RequireOwnership = false)]
+    void SetMoveDir_ServerRpc(Vector2 inVect)
+    {
+        networkMoveDirection.Value = inVect;
+    }
+
+
+    private void PlayerAttackingServAuth()
+    {
+        PlayerAttacking_ServerRpc(networkAttackDirection.Value, isChargingAttack);
+        //Debug.Log(-rootJoint.transform.forward);
+        //Debug.Log("Is host: " + IsHost + " and attacking");
+
     }
 
     [ServerRpc]
-    private void PlayerAttackingServerRpc(Vector3 inputMoveDir)
+    private void PlayerAttacking_ServerRpc(Vector3 inputMoveDir, bool isAttacking)
     {
-        if (isChargingAttack)
+        if(isAttacking)
         {
-            //moveSpeed = runSpeed;
-
             //charging up
             if (networkChargeLevel.Value < maxCharge)
             {
-                networkChargeLevel.Value += 1;
+                IncrementChargeLevel_ServerRpc(1);
                 Debug.Log(networkChargeLevel.Value);
             }
 
@@ -212,14 +258,30 @@ public class PlayerScript : NetworkBehaviour
             if (networkChargeLevel.Value == maxCharge)
             {
                 Debug.Log("Max charge");
+                
             }
 
-            rb.velocity = inputMoveDir * runSpeed;
+
+            rb.velocity = inputMoveDir * networkMoveSpeed.Value;
         }
+        
 
-    }*/
+    }
 
-    private void PlayerAttack(Vector3 moveInput, bool attacking)
+    [ServerRpc(RequireOwnership = false)]
+    void SetAttackDirection_ServerRpc(Vector3 inVect2)
+    {
+        networkAttackDirection.Value = inVect2;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void IncrementChargeLevel_ServerRpc(float incrementVal)
+    {
+        networkChargeLevel.Value += incrementVal;
+    }
+
+
+    /*private void PlayerAttack(Vector3 moveInput, bool attacking)
     {
         if (attacking)
         {
@@ -245,7 +307,7 @@ public class PlayerScript : NetworkBehaviour
     private void PlayerAttackServerRpc(Vector3 moveInput, bool attacking)
     {
         PlayerAttack(moveInput, attacking);
-    }
+    }*/
 
     public Vector2 GetMoveInput()
     {
