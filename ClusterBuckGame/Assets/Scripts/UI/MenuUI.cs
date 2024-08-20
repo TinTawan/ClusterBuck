@@ -1,12 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using TMPro;
-using UnityEngine.UI;
-using Unity.Netcode;
 using System;
+using TMPro;
 using Unity.Collections;
-using System.Linq;
+using System.Collections;
+using UnityEngine;
+using UnityEngine.UI;
 
 
 public class MenuUI : MonoBehaviour
@@ -59,7 +56,7 @@ public class MenuUI : MonoBehaviour
 
     private void Update()
     {
-        if(colourSection.activeInHierarchy)
+        if (colourSection.activeInHierarchy)
         {
             SetColour();
         }
@@ -67,9 +64,6 @@ public class MenuUI : MonoBehaviour
 
     private void ConfirmColour()
     {
-        //set colour 
-
-
         colourSection.SetActive(false);
         mainSection.SetActive(true);
     }
@@ -93,8 +87,20 @@ public class MenuUI : MonoBehaviour
 
     private void PlayGame()
     {
+        if (playerNameText.text.Length <= 0)
+        {
+            playerName = playerNameText.text;
+        }
+        else
+        {
+            int rand = UnityEngine.Random.Range(0, 100);
+            playerName = $"Deer {rand}";
+        }
+        //send playerName to network
+        //send playerColour to network
+
         //move to lobby scene
-        //send colour and player name data through to network?
+
     }
 
     public void BackToMenu(GameObject currentSection)
@@ -106,9 +112,9 @@ public class MenuUI : MonoBehaviour
     private void SetColour()
     {
         Color newColour = new Color32();
-        newColour.r = rSlider.value/255;
-        newColour.g = gSlider.value/255; 
-        newColour.b = bSlider.value/255;
+        newColour.r = rSlider.value / 255;
+        newColour.g = gSlider.value / 255;
+        newColour.b = bSlider.value / 255;
 
         rVal.text = rSlider.value.ToString();
         gVal.text = gSlider.value.ToString();
@@ -127,8 +133,8 @@ public class MenuUI : MonoBehaviour
             errorText.enabled = false;
 
             playerNameText.color = Color.white;
-            playerNameInputField.placeholder.color = Color.white;
-            playerNameInputField.textComponent.color = Color.white;
+            playerNameInputField.placeholder.color = Color.black;
+            playerNameInputField.textComponent.color = Color.black;
 
         }
         else
@@ -144,5 +150,5 @@ public class MenuUI : MonoBehaviour
 
     }
 
-    
+
 }
