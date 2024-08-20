@@ -27,7 +27,14 @@ public class GameUI : MonoBehaviour
 
     private void OnEnable()
     {
-        playerScript = NetworkManager.Singleton.LocalClient.PlayerObject.gameObject.GetComponent<PlayerScript>();
+        if(NetworkManager.Singleton.IsHost)
+        {
+            playerScript = NetworkManager.Singleton.ConnectedClients[NetworkManager.Singleton.LocalClientId].PlayerObject.GetComponent<PlayerScript>();
+        }
+        else if(NetworkManager.Singleton.IsClient)
+        {
+            playerScript = NetworkManager.Singleton.LocalClient.PlayerObject.GetComponent<PlayerScript>();
+        }
         chargeValText.text = "Charge Level: 0";
     }
 

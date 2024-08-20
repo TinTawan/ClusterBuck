@@ -49,7 +49,13 @@ public class PlayerScript : NetworkBehaviour
     private bool isChargingAttack;
     float maxCharge = 50;
 
-    //private GameObject gameUI;
+    private GameUI gameUI;
+    private Canvas canvas;
+
+    /*[SerializeField] private Material playerMat;
+    private Color playerColour = Color.white;
+    //private NetworkVariable<Color> network_PlayerColour = new NetworkVariable<Color>(Color.white, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);*/
+
 
     public override void OnNetworkSpawn()
     {
@@ -65,7 +71,11 @@ public class PlayerScript : NetworkBehaviour
 
         playerInput.camera = FindObjectOfType<Camera>();
 
-        //gameUI = FindObjectOfType<Canvas>().transform.Find("GameUI").gameObject;
+        /*if (IsLocalPlayer)
+        {
+            gameUI = FindObjectOfType<Camera>().GetComponentInChildren<GameUI>();
+        }*/
+        
 
         if (IsClient && IsOwner)
         {
@@ -79,7 +89,18 @@ public class PlayerScript : NetworkBehaviour
             freeLookCam.Follow = transform;
             freeLookCam.LookAt = transform;
 
-            //gameUI.SetActive(true);
+            canvas = cam.gameObject.GetComponentInChildren<Canvas>();
+            gameUI = canvas.GetComponentInChildren<GameUI>(includeInactive:true);
+            gameUI.gameObject.SetActive(true);
+
+
+            /*Color randCol = Random.ColorHSV();
+            randCol.a = 100;
+            playerColour = randCol;
+
+            //SetPlayerColour_ServerRpc(randCol);
+
+            playerMat.color = playerColour;*/
 
         }
         else if (IsOwner)
@@ -129,7 +150,7 @@ public class PlayerScript : NetworkBehaviour
 
 
         //reset network var for charge level to 0
-        IncrementChargeLevel_ServerRpc(-network_ChargeLevel.Value);
+        ResetChargeLevel_ServerRpc();
         Debug.Log("Release Attack");
 
         
@@ -255,6 +276,19 @@ public class PlayerScript : NetworkBehaviour
     void IncrementChargeLevel_ServerRpc(float incrementVal)
     {
         network_ChargeLevel.Value += incrementVal;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    void ResetChargeLevel_ServerRpc()
+    {
+        network_ChargeLevel.Value = 0;
+    }
+
+
+    [ServerRpc(RequireOwnership = false)]
+    void SetPlayerColour_ServerRpc(Color inColour)
+    {
+        //network_PlayerColour.Value = inColour;
     }
 
 
