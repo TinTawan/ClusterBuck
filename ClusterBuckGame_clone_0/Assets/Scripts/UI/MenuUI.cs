@@ -48,7 +48,7 @@ public class MenuUI : MonoBehaviour
 
         confirmButton.onClick.AddListener(() =>
         {
-            ConfirmColour();
+            ConfirmButton();
         });
 
         playerNameInputField.onValueChanged.AddListener(SetName);
@@ -66,9 +66,10 @@ public class MenuUI : MonoBehaviour
         }
     }
 
-    private void ConfirmColour()
+    private void ConfirmButton()
     {
         colourSection.SetActive(false);
+        settingsSection.SetActive(false);
         mainSection.SetActive(true);
     }
 
@@ -114,7 +115,7 @@ public class MenuUI : MonoBehaviour
     public void BackToMenu(GameObject currentSection)
     {
         currentSection.SetActive(false);
-        colourSection.SetActive(true);
+        mainSection.SetActive(true);
     }
 
     private void SetColour()
