@@ -52,6 +52,10 @@ public class MenuUI : MonoBehaviour
         });
 
         playerNameInputField.onValueChanged.AddListener(SetName);
+
+        rSlider.value = 165;
+        gSlider.value = 165;
+        bSlider.value = 165;
     }
 
     private void Update()
@@ -87,7 +91,7 @@ public class MenuUI : MonoBehaviour
 
     private void PlayGame()
     {
-        if (playerNameText.text.Length <= 0)
+        /*if (playerNameText.text.Length <= 0)
         {
             playerName = playerNameText.text;
         }
@@ -95,7 +99,11 @@ public class MenuUI : MonoBehaviour
         {
             int rand = UnityEngine.Random.Range(0, 100);
             playerName = $"Deer {rand}";
-        }
+        }*/
+
+        //set the player name variable
+        playerName = playerNameText.text;
+
         //send playerName to network
         //send playerColour to network
 
@@ -127,7 +135,7 @@ public class MenuUI : MonoBehaviour
 
     private void SetName(string inName)
     {
-        if (inName.Length <= 32)
+        if (inName.Length <= 16)
         {
             playerNameText.text = inName;
             errorText.enabled = false;
@@ -144,6 +152,18 @@ public class MenuUI : MonoBehaviour
             playerNameInputField.placeholder.color = Color.red;
             playerNameInputField.textComponent.color = Color.red;
             errorText.enabled = true;
+        }
+
+        if(inName.Length == 0) 
+        {
+            //assign random name to players who leave the input field blank
+            int rand = UnityEngine.Random.Range(0, 100);
+            playerNameText.text = $"Deer{rand}";
+            errorText.enabled = false;
+
+            playerNameText.color = Color.white;
+            playerNameInputField.placeholder.color = Color.black;
+            playerNameInputField.textComponent.color = Color.black;
         }
 
 
