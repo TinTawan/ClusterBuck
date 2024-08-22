@@ -8,7 +8,10 @@ using UnityEngine.UI;
 
 public class MenuUI : MonoBehaviour
 {
-    [SerializeField] private GameObject mainSection, colourSection, settingsSection;
+    [Header("Main Menu")]
+    [SerializeField] private GameObject mainSection;
+    [SerializeField] private GameObject colourSection;
+    [SerializeField] private GameObject settingsSection;
     [SerializeField] private TextMeshProUGUI playerNameText, rVal, gVal, bVal, errorText;
     [SerializeField] private TMP_InputField playerNameInputField;
     [SerializeField] private Slider rSlider, gSlider, bSlider;
@@ -17,10 +20,34 @@ public class MenuUI : MonoBehaviour
     private Color playerColour;
     private FixedString32Bytes playerName;
 
-    [SerializeField] Button playButton, settingsButton, quitButton, colourButton, confirmButton;
+    [SerializeField] private Button playButton, settingsButton, quitButton, colourButton, confirmButton;
+
+    [Header("Lobby List")]
+    [SerializeField] private Button backButton; 
+    [SerializeField] private Button refreshButton, addLobbyButton, joinPrivateLobbyButton;
+    [SerializeField] private InputField lobbyCodeInput;
+
+    [Header("Joinable Lobby in List")]
+    [SerializeField] private TextMeshProUGUI lobbyName;
+    [SerializeField] private TextMeshProUGUI currentPlayerCount, maxPlayerCount;
+
+    [Header("Create Lobby")]
+    [SerializeField] private Button returnToListButton;
+    [SerializeField] private Button lobbyStartButton;
+    [SerializeField] private InputField lobbyNameInputField;
+    [SerializeField] private Toggle isPublicToggle;
+    [SerializeField] private GameObject privateText;
+
+
+    [Header("Player Card in Lobby")]
+    [SerializeField] private TextMeshProUGUI playerLobbyName;
+    [SerializeField] private Image playerLobbyColourImage;
+
+
 
     private void Awake()
     {
+        //==== main menu ====
         mainSection.SetActive(true);
         colourSection.SetActive(false);
         settingsSection.SetActive(false);
@@ -56,6 +83,17 @@ public class MenuUI : MonoBehaviour
         rSlider.value = 165;
         gSlider.value = 165;
         bSlider.value = 165;
+
+        //====
+
+
+        //==== Create Lobby ====
+
+        
+
+
+        //====
+
     }
 
     private void Update()
@@ -64,6 +102,10 @@ public class MenuUI : MonoBehaviour
         {
             SetColour();
         }
+
+
+
+        TogglePublicPrivate();
     }
 
     private void ConfirmButton()
@@ -171,5 +213,18 @@ public class MenuUI : MonoBehaviour
 
     }
 
+
+    void TogglePublicPrivate()
+    {
+        if(isPublicToggle.isOn)
+        {
+            privateText.SetActive(false);
+        }
+        else
+        {
+            privateText.SetActive(true);
+        }
+
+    }
 
 }
