@@ -1,80 +1,52 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
-using UnityEngine.SceneManagement;
 using UnityEngine;
-using System;
+using UnityEngine.SceneManagement;
 
 public class GetBuckedManager : NetworkBehaviour
 {
-    public static GetBuckedManager Instance { get; private set; }
+    public static GetBuckedManager Instance {  get; private set; }
 
-    private int maxPlayerCount = 4;
 
-    public event EventHandler OnTryingToJoinGame;
-    public event EventHandler OnFailedToJoinGame;
+    [SerializeField] private Transform playerPrefab;
+
+    private enum State
+    {
+        GamePlaying,
+        GameOver,
+    }
+
 
     private void Awake()
     {
-        /*if(Instance == null)
-        {
-            Instance = this;
-        }
-        else if(Instance != this)
-        {
-            Destroy(this);
-        }
-        DontDestroyOnLoad(Instance);*/
-
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+
 
     }
 
-    public void StartHost()
-    {
-        NetworkManager.Singleton.ConnectionApprovalCallback += NetworkManager_ConnectionApprovalCallback;
-        NetworkManager.Singleton.StartHost();
-    }
 
-    private void NetworkManager_ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest connectionApprovalRequest, NetworkManager.ConnectionApprovalResponse connectionApprovalResponse)
+    public override void OnNetworkSpawn()
     {
-        /*if(SceneManager.GetActiveScene().name != Loader.Scene.MainMenu.ToString())
+        if(IsServer)
         {
-            connectionApprovalResponse.Approved = false;
-            connectionApprovalResponse.Reason = "Game already started";
-            return;
+            //NetworkManager.Singleton.OnClientConnectedCallback += NetworkManger_OnClientDisconnectCallback;
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManager_OnLoadEventCompleted;
         }
+    }
 
-        if(NetworkManager.Singleton.ConnectedClientsIds.Count >= maxPlayerCount)
+    private void SceneManager_OnLoadEventCompleted(string sceneName, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
+    {
+        foreach(ulong clientId in NetworkManager.Singleton.ConnectedClientsIds)
         {
-            connectionApprovalResponse.Approved = false;
-            connectionApprovalResponse.Reason = "Game full";
-            return;
-        }*/
-
-        connectionApprovalResponse.Approved = true;
+            Transform playerTransform = Instantiate(playerPrefab);
+            playerTransform.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId,true);
+        }
     }
 
-    public void StartClient()
+    /*private void NetworkManger_OnClientDisconnectCallback(ulong clientId)
     {
-        OnTryingToJoinGame?.Invoke(this, EventArgs.Empty);
-
-        NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_OnClientDisconnectedCallback;
-        NetworkManager.Singleton.StartClient();
-    }
-    private void NetworkManager_OnClientDisconnectedCallback(ulong clientId)
-    {
-        OnFailedToJoinGame?.Invoke(this, EventArgs.Empty);
-    }
-
-    public int GetMaxPlayerCount()
-    {
-        return maxPlayerCount;
-    }
-    public void SetMaxPlayerCount(int inMaxPlayerCount)
-    {
-        maxPlayerCount = inMaxPlayerCount;
-    }
-
+        
+    }*/
 }

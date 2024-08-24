@@ -13,13 +13,13 @@ public class TestingLobbyUI : MonoBehaviour
         //equivalent of the host pressing the Start button when inside a lobby
         createGameButton.onClick.AddListener(() =>
         {
-            GetBuckedManager.Instance.StartHost();
-            Loader.LoadNetwork(Loader.Scene.GameScene);
+            GetBuckedMultiplayer.Instance.StartHost();
+            Loader.LoadNetwork(Loader.Scene.PlayerCustomisation);
         });
 
         joinGameButton.onClick.AddListener(() =>
         {
-            GetBuckedManager.Instance.StartClient();
+            GetBuckedMultiplayer.Instance.StartClient();
         });
     }
 }
