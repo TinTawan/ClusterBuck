@@ -25,7 +25,7 @@ public class MenuUI : MonoBehaviour
     [Header("Lobby List")]
     [SerializeField] private Button backButton; 
     [SerializeField] private Button refreshButton, addLobbyButton, joinPrivateLobbyButton;
-    [SerializeField] private InputField lobbyCodeInput;
+    [SerializeField] private TMP_InputField lobbyCodeInput;
 
     [Header("Joinable Lobby in List")]
     [SerializeField] private TextMeshProUGUI lobbyName;
@@ -34,9 +34,10 @@ public class MenuUI : MonoBehaviour
     [Header("Create Lobby")]
     [SerializeField] private Button returnToListButton;
     [SerializeField] private Button lobbyStartButton;
-    [SerializeField] private InputField lobbyNameInputField;
+    [SerializeField] private TMP_InputField lobbyNameInputField;
     [SerializeField] private Toggle isPublicToggle;
     [SerializeField] private GameObject privateText;
+    [SerializeField] private TMP_Dropdown maxPlayersDropdown;
 
 
     [Header("Player Card in Lobby")]
@@ -48,7 +49,7 @@ public class MenuUI : MonoBehaviour
     private void Awake()
     {
         //==== main menu ====
-        mainSection.SetActive(true);
+        //mainSection.SetActive(true);
         colourSection.SetActive(false);
         settingsSection.SetActive(false);
         errorText.enabled = false;
