@@ -19,8 +19,10 @@ public class PlayerSettings : NetworkBehaviour
 
     [SerializeField] private SkinnedMeshRenderer playerMeshRend;
 
-    [SerializeField] private List<Color> playerColorList = new List<Color>();
+    //[SerializeField] private List<Color> playerColorList = new List<Color>();
 
+
+    private string playerName;
 
     private void Awake()
     {
@@ -42,7 +44,12 @@ public class PlayerSettings : NetworkBehaviour
         canvas.worldCamera = cam;
 
 
-        playerMeshRend.material.color = playerColorList[(int)OwnerClientId];
+        //playerMeshRend.material.color = playerColorList[(int)OwnerClientId];
+
+        PlayerData playerData = GetBuckedMultiplayer.Instance.GetPlayerDataFromClientId(OwnerClientId);
+        playerMeshRend.material.color = playerData.playerColour;
+
+        playerName = playerData.playerName.ToString();
     }
 
     private void Update()
@@ -58,18 +65,20 @@ public class PlayerSettings : NetworkBehaviour
     private void SetOverlay()
     {
         TextMeshProUGUI localPlayerUI = gameObject.GetComponentInChildren<TextMeshProUGUI>();
-        localPlayerUI.text = network_PlayerName.Value.ToString();
+        //localPlayerUI.text = network_PlayerName.Value.ToString();
+        localPlayerUI.text = playerName.ToString();
+
 
         UiSet = true;
     }
 
-    public List<Color> GetPlayerColourList()
+    /*public List<Color> GetPlayerColourList()
     {
         return playerColorList;
     }
     public void SetPlayerColourInList(int playerID, Color inColour)
     {
         playerColorList[playerID] = inColour;
-    }
+    }*/
 
 }

@@ -13,6 +13,13 @@ public static class Loader
 
     private static Scene targetScene;
 
+
+    public static void Load(Scene targetScene)
+    {
+        Loader.targetScene = targetScene;
+
+        SceneManager.LoadScene(Scene.MainMenu.ToString());
+    }
     public static void LoadNetwork(Scene targetScene)
     {
         //Loader.targetScene = targetScene;

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -8,6 +9,9 @@ using UnityEngine;
 public class PlayerCustomisationReady : NetworkBehaviour
 {
     public static PlayerCustomisationReady Instance { get; private set; }
+
+
+    public event EventHandler OnReadyChanged;
 
     private Dictionary<ulong, bool> playerReadyDictionary;
 
@@ -27,6 +31,8 @@ public class PlayerCustomisationReady : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     private void SetPlayerReady_ServerRpc(ServerRpcParams serverRpcParams = default)
     {
+        SetPlayerReady_ClientRpc(serverRpcParams.Receive.SenderClientId);
+
         playerReadyDictionary[serverRpcParams.Receive.SenderClientId] = true;
 
         bool allClientsReady = true;
@@ -44,5 +50,18 @@ public class PlayerCustomisationReady : NetworkBehaviour
         {
             Loader.LoadNetwork(Loader.Scene.GameScene);
         }
+    }
+
+    [ClientRpc]
+    private void SetPlayerReady_ClientRpc(ulong clientId)
+    {
+        playerReadyDictionary[clientId] = true;
+
+        OnReadyChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public bool IsPlayerReady(ulong clientId)
+    {
+        return playerReadyDictionary.ContainsKey(clientId) && playerReadyDictionary[clientId];
     }
 }
