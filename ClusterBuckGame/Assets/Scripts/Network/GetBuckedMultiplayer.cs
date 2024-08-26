@@ -161,7 +161,7 @@ public class GetBuckedMultiplayer : NetworkBehaviour
 
     public void ChangePlayerName(FixedString32Bytes inName)
     {
-
+        ChangePlayerName_ServerRpc(inName);
     }
     [ServerRpc(RequireOwnership = false)]
     private void ChangePlayerName_ServerRpc(FixedString32Bytes inName, ServerRpcParams serverRpcParams = default)
