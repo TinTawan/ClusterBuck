@@ -10,15 +10,12 @@ public class MenuUI : MonoBehaviour
 {
     [Header("Main Menu")]
     [SerializeField] private GameObject mainSection;
-    [SerializeField] private GameObject colourSection;
+    [SerializeField] private GameObject lobbySection;
     [SerializeField] private GameObject settingsSection;
     [SerializeField] private TextMeshProUGUI playerNameText, rVal, gVal, bVal, errorText;
     [SerializeField] private TMP_InputField playerNameInputField;
     [SerializeField] private Slider rSlider, gSlider, bSlider;
     [SerializeField] private SkinnedMeshRenderer playerMesh;
-
-    private Color playerColour;
-    private FixedString32Bytes playerName;
 
     [SerializeField] private Button playButton, settingsButton, quitButton, colourButton, confirmButton;
 
@@ -49,8 +46,8 @@ public class MenuUI : MonoBehaviour
     private void Awake()
     {
         //==== main menu ====
-        //mainSection.SetActive(true);
-        colourSection.SetActive(false);
+        mainSection.SetActive(true);
+        lobbySection.SetActive(false);
         settingsSection.SetActive(false);
         errorText.enabled = false;
 
@@ -69,7 +66,7 @@ public class MenuUI : MonoBehaviour
             QuitGame();
         });
 
-        colourButton.onClick.AddListener(() =>
+        /*colourButton.onClick.AddListener(() =>
         {
             ColourSection();
         });
@@ -83,7 +80,7 @@ public class MenuUI : MonoBehaviour
 
         rSlider.value = 165;
         gSlider.value = 165;
-        bSlider.value = 165;
+        bSlider.value = 165;*/
 
         //====
 
@@ -99,17 +96,17 @@ public class MenuUI : MonoBehaviour
 
     private void Update()
     {
-        if (colourSection.activeInHierarchy)
+        /*if (colourSection.activeInHierarchy)
         {
             SetColour();
-        }
+        }*/
 
 
 
-        TogglePublicPrivate();
+        //TogglePublicPrivate();
     }
 
-    private void ConfirmButton()
+    /*private void ConfirmButton()
     {
         colourSection.SetActive(false);
         settingsSection.SetActive(false);
@@ -120,7 +117,7 @@ public class MenuUI : MonoBehaviour
     {
         mainSection.SetActive(false);
         colourSection.SetActive(true);
-    }
+    }*/
 
     private void QuitGame()
     {
@@ -146,12 +143,15 @@ public class MenuUI : MonoBehaviour
         }*/
 
         //set the player name variable
-        playerName = playerNameText.text;
+        //playerName = playerNameText.text;
 
         //send playerName to network
         //send playerColour to network
 
         //move to lobby scene
+
+        mainSection.SetActive(false);
+        lobbySection.SetActive(true);
 
     }
 
@@ -161,7 +161,7 @@ public class MenuUI : MonoBehaviour
         mainSection.SetActive(true);
     }
 
-    private void SetColour()
+    /*private void SetColour()
     {
         Color newColour = new Color32();
         newColour.r = rSlider.value / 255;
@@ -175,9 +175,9 @@ public class MenuUI : MonoBehaviour
         playerColour = newColour;
 
         playerMesh.material.color = playerColour;
-    }
+    }*/
 
-    private void SetName(string inName)
+    /*private void SetName(string inName)
     {
         if (inName.Length <= 16)
         {
@@ -212,7 +212,7 @@ public class MenuUI : MonoBehaviour
 
 
 
-    }
+    }*/
 
 
     void TogglePublicPrivate()
