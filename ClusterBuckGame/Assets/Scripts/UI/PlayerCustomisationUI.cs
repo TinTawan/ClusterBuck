@@ -22,7 +22,7 @@ public class PlayerCustomisationUI : MonoBehaviour
 
     private Material playerMaterial;
     private Color playerColour;
-    private FixedString32Bytes playerName;
+    private string playerName;
 
 
     [Header("Lobby Customisation")]
@@ -136,12 +136,17 @@ public class PlayerCustomisationUI : MonoBehaviour
 
     private void SetPlayerData()
     {
-       /* PlayerData thisPlayer = GetBuckedMultiplayer.Instance.GetPlayerData();
-        thisPlayer.playerColour = playerColour;
-        thisPlayer.playerName = playerName;*/
+        /* PlayerData thisPlayer = GetBuckedMultiplayer.Instance.GetPlayerData();
+         thisPlayer.playerColour = playerColour;
+         thisPlayer.playerName = playerName;*/
 
-        GetBuckedMultiplayer.Instance.ChangePlayerName(playerName);
+        //GetBuckedMultiplayer.Instance.ChangePlayerName(playerName);
         GetBuckedMultiplayer.Instance.ChangePlayerColour(playerColour);
+
+
+        GetBuckedMultiplayer.Instance.SetPlayerName(playerName);
+        //GetBuckedMultiplayer.Instance.SetPlayerColourHex(playerColour);
+
 
     }
 

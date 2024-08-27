@@ -6367,7 +6367,7 @@ GameObject:
   - component: {fileID: 501835037}
   - component: {fileID: 501835035}
   m_Layer: 0
-  m_Name: GetBuckedManager
+  m_Name: GetBuckedMultiplayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -20827,8 +20827,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 91817104}
   m_HandleRect: {fileID: 91817103}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 1
+  m_Value: 0
+  m_Size: 0
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
