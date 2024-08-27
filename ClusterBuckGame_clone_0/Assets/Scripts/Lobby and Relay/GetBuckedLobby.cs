@@ -66,11 +66,11 @@ public class GetBuckedLobby : MonoBehaviour
         
     }
 
-    public async void CreateLobby(string lobbyName, bool isPrivate)
+    public async void CreateLobby(string lobbyName, bool isPrivate, int maxPlayerCount)
     {
         try
         {
-            joinedLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, GetBuckedMultiplayer.Instance.GetMaxPlayerCount(),
+            joinedLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, maxPlayerCount,
             new CreateLobbyOptions
             {
                 IsPrivate = isPrivate,

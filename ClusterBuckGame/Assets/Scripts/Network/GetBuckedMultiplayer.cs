@@ -95,7 +95,7 @@ public class GetBuckedMultiplayer : NetworkBehaviour
             return;
         }
 
-        if (NetworkManager.Singleton.ConnectedClientsIds.Count >= maxPlayerCount)
+        if (NetworkManager.Singleton.ConnectedClientsIds.Count >= GetBuckedLobby.Instance.GetLobby().MaxPlayers)
         {
             connectionApprovalResponse.Approved = false;
             connectionApprovalResponse.Reason = "Game full";

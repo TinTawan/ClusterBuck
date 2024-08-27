@@ -17,7 +17,7 @@ public class CreateLobbyUI : MonoBehaviour
     {
         createLobbyButton.onClick.AddListener(() =>
         {
-            GetBuckedLobby.Instance.CreateLobby(lobbyNameInput.text, togglePrivate.isOn);
+            GetBuckedLobby.Instance.CreateLobby(lobbyNameInput.text, togglePrivate.isOn, maxPlayersDropdown.value);
         });
         backButton.onClick.AddListener(() =>
         {
