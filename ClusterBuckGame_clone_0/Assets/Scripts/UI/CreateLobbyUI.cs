@@ -17,7 +17,7 @@ public class CreateLobbyUI : MonoBehaviour
     {
         createLobbyButton.onClick.AddListener(() =>
         {
-            GetBuckedLobby.Instance.CreateLobby(lobbyNameInput.text, togglePrivate.isOn, maxPlayersDropdown.value);
+            GetBuckedLobby.Instance.CreateLobby(lobbyNameInput.text, togglePrivate.isOn, GetMaxPlayersFromDropdown());
         });
         backButton.onClick.AddListener(() =>
         {
@@ -37,6 +37,11 @@ public class CreateLobbyUI : MonoBehaviour
     private void Hide()
     {
         gameObject.SetActive(false);
+    }
+
+    private int GetMaxPlayersFromDropdown()
+    {
+        return int.Parse(maxPlayersDropdown.captionText.text);
     }
 
 }

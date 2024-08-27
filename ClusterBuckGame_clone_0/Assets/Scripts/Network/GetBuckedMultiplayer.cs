@@ -33,7 +33,7 @@ public class GetBuckedMultiplayer : NetworkBehaviour
 
         network_PlayerDataList = new NetworkList<PlayerData>();
 
-        playerName = PlayerPrefs.GetString(PlayerPrefs_PlayerName_Multiplayer, $"Deer{UnityEngine.Random.Range(0, 100)}");
+        playerName = PlayerPrefs.GetString(PlayerPrefs_PlayerName_Multiplayer, "Deer " + UnityEngine.Random.Range(0, 1000));
         //playerColourHex = PlayerPrefs.GetString(PlayerPrefs_PlayerColour_Multiplayer, "A4A4A4");
 
 
@@ -74,7 +74,7 @@ public class GetBuckedMultiplayer : NetworkBehaviour
         NetworkManager.Singleton.OnClientConnectedCallback += NetworkManager_OnClientConnectedCallback;
         NetworkManager.Singleton.StartHost();
 
-        SetPlayerName_ServerRpc(GetPlayerName());
+        
     }
 
     private void NetworkManager_OnClientConnectedCallback(ulong clientId)
@@ -84,6 +84,9 @@ public class GetBuckedMultiplayer : NetworkBehaviour
             clientId = clientId,
             playerColour = new(165, 165, 165),
         });
+
+        SetPlayerName_ServerRpc(GetPlayerName());
+
     }
 
     private void NetworkManager_ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest connectionApprovalRequest, NetworkManager.ConnectionApprovalResponse connectionApprovalResponse)
@@ -95,7 +98,7 @@ public class GetBuckedMultiplayer : NetworkBehaviour
             return;
         }
 
-        if (NetworkManager.Singleton.ConnectedClientsIds.Count >= GetBuckedLobby.Instance.GetLobby().MaxPlayers)
+        if (GetBuckedLobby.Instance.IsLobbyFull())
         {
             connectionApprovalResponse.Approved = false;
             connectionApprovalResponse.Reason = "Game full";
@@ -128,6 +131,7 @@ public class GetBuckedMultiplayer : NetworkBehaviour
         playerData.playerName = inName;
 
         network_PlayerDataList[playerDataIndex] = playerData;
+
     }
     private void NetworkManager_Client_OnClientDisconnectedCallback(ulong clientId)
     {
@@ -219,4 +223,7 @@ public class GetBuckedMultiplayer : NetworkBehaviour
 
         network_PlayerDataList[playerDataIndex] = playerData;
     }*/
+
+
+    
 }

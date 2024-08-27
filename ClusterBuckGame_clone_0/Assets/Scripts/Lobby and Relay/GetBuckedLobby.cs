@@ -121,4 +121,18 @@ public class GetBuckedLobby : MonoBehaviour
     {
         return joinedLobby;
     }
+
+    public bool IsLobbyFull()
+    {
+        if (joinedLobby.AvailableSlots <= 0)
+        {
+            return true;
+
+        }
+        else
+        {
+            return false;
+        }
+
+    }
 }
