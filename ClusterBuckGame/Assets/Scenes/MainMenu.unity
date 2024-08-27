@@ -3065,7 +3065,7 @@ RectTransform:
   - {fileID: 1796141295}
   - {fileID: 1572060731}
   - {fileID: 795371629}
-  m_Father: {fileID: 2080142241}
+  m_Father: {fileID: 847031581}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -3153,6 +3153,8 @@ MonoBehaviour:
   quickJoinButton: {fileID: 192763926}
   refreshButton: {fileID: 845246886}
   joinPrivateButton: {fileID: 1493493711}
+  createLobbyUI: {fileID: 653131908}
+  lobbyCodeInput: {fileID: 1965528550}
 --- !u!1 &211628171
 GameObject:
   m_ObjectHideFlags: 0
@@ -8795,6 +8797,7 @@ GameObject:
   - component: {fileID: 653131905}
   - component: {fileID: 653131907}
   - component: {fileID: 653131906}
+  - component: {fileID: 653131908}
   m_Layer: 5
   m_Name: CreateLobbyUI
   m_TagString: Untagged
@@ -8815,7 +8818,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1645426554}
-  m_Father: {fileID: 2080142241}
+  m_Father: {fileID: 847031581}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -8860,6 +8863,23 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 653131904}
   m_CullTransparentMesh: 1
+--- !u!114 &653131908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 653131904}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7dffaedce430e5b45bf4205d6cb2e494, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  backButton: {fileID: 115886651}
+  createLobbyButton: {fileID: 1177872828}
+  togglePrivate: {fileID: 1308999928}
+  maxPlayersDropdown: {fileID: 1073831983}
+  lobbyNameInput: {fileID: 2063732553}
 --- !u!1 &689872173
 GameObject:
   m_ObjectHideFlags: 0
@@ -10964,7 +10984,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 818059914}
-  - {fileID: 2080142241}
+  - {fileID: 201737744}
+  - {fileID: 653131905}
   - {fileID: 829758102}
   - {fileID: 169939370}
   - {fileID: 1297561661}
@@ -10989,7 +11010,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mainSection: {fileID: 100611398}
-  lobbySection: {fileID: 2080142240}
+  lobbySection: {fileID: 201737743}
   settingsSection: {fileID: 879206611}
   playerNameText: {fileID: 651465465}
   rVal: {fileID: 521517302}
@@ -28084,43 +28105,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2078460171}
   m_CullTransparentMesh: 1
---- !u!1 &2080142240
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2080142241}
-  m_Layer: 5
-  m_Name: LobbyPanel
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &2080142241
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2080142240}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 201737744}
-  - {fileID: 653131905}
-  m_Father: {fileID: 847031581}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -920, y: -180}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1001 &2084851676
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -2,12 +2,15 @@ using System;
 using TMPro;
 using Unity.Collections;
 using Unity.Netcode;
+using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerCustomisationUI : MonoBehaviour
 {
-    [SerializeField] private Button readyButton, menuButton, confirmButton, toLobbyButton, backToColourButton;
+    [Header("Player Customisation")]
+    [SerializeField] private Button readyButton;
+    [SerializeField] private Button menuButton, confirmButton, toLobbyButton, backToColourButton;
     [SerializeField] private Slider rSlider, gSlider, bSlider;
     [SerializeField] private TextMeshProUGUI rVal, gVal, bVal, playerNameText, errorText;
     [SerializeField] private TMP_InputField playerNameInputField;
@@ -20,6 +23,13 @@ public class PlayerCustomisationUI : MonoBehaviour
     private Material playerMaterial;
     private Color playerColour;
     private FixedString32Bytes playerName;
+
+
+    [Header("Lobby Customisation")]
+    [SerializeField] private TextMeshProUGUI lobbyName;
+    [SerializeField] private TextMeshProUGUI lobbyName2;
+    [SerializeField] private TextMeshProUGUI lobbyCode;
+    [SerializeField] private TextMeshProUGUI lobbyCode2;
 
 
     private void Awake()
@@ -37,6 +47,7 @@ public class PlayerCustomisationUI : MonoBehaviour
         confirmButton.onClick.AddListener(() =>
         {
             ConfirmPlayerData();
+            ToLobby();
 
         });
         toLobbyButton.onClick.AddListener(() =>
@@ -66,6 +77,18 @@ public class PlayerCustomisationUI : MonoBehaviour
 
     }
 
+    private void Start()
+    {
+        Lobby lobby = GetBuckedLobby.Instance.GetLobby();
+
+        lobbyName.text = lobby.Name;
+        lobbyCode.text = lobby.LobbyCode;
+
+        lobbyName2.text = lobby.Name;
+        lobbyCode2.text = lobby.LobbyCode;
+    }
+
+
     private void BackToColourSection()
     {
         lobbyPanel.SetActive(!lobbyPanel.activeInHierarchy);
@@ -91,6 +114,8 @@ public class PlayerCustomisationUI : MonoBehaviour
         readyButton.interactable = true;
 
         SetPlayerData();
+
+        
 
     }
 

@@ -11,8 +11,10 @@ public class GetBuckedLobby : MonoBehaviour
 
     public static GetBuckedLobby Instance { get; private set; }
 
-
     private Lobby joinedLobby;
+
+    private float heartbeatTimer;
+
     private void Awake()
     {
         Instance = this;
@@ -20,6 +22,31 @@ public class GetBuckedLobby : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         InitialiseUnityAth();
+    }
+
+    private void Update()
+    {
+        HandleHeartBeat();
+    }
+
+    private void HandleHeartBeat()
+    {
+        if (IsLobbyHost())
+        {
+            heartbeatTimer -= Time.deltaTime;
+            if(heartbeatTimer < 0)
+            {
+                float maxHeartbeatTimer = 20f;
+                heartbeatTimer = maxHeartbeatTimer;
+
+                LobbyService.Instance.SendHeartbeatPingAsync(joinedLobby.Id);
+            }
+        }
+
+    }
+    private bool IsLobbyHost()
+    {
+        return joinedLobby != null && joinedLobby.HostId == AuthenticationService.Instance.PlayerId;
     }
 
     private async void InitialiseUnityAth()
@@ -46,7 +73,7 @@ public class GetBuckedLobby : MonoBehaviour
             joinedLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, GetBuckedMultiplayer.Instance.GetMaxPlayerCount(),
             new CreateLobbyOptions
             {
-                IsPrivate = isPrivate
+                IsPrivate = isPrivate,
             });
 
             GetBuckedMultiplayer.Instance.StartHost();
@@ -74,5 +101,24 @@ public class GetBuckedLobby : MonoBehaviour
             Debug.LogWarning(e);
         }
     }
+
+    public async void JoinByCode(string code)
+    {
+        try
+        {
+            joinedLobby = await LobbyService.Instance.JoinLobbyByCodeAsync(code);
+
+            GetBuckedMultiplayer.Instance.StartClient();
+        }
+        catch(LobbyServiceException e)
+        {
+            Debug.LogWarning(e);
+        }
+
+    }
     
+    public Lobby GetLobby()
+    {
+        return joinedLobby;
+    }
 }
