@@ -116,7 +116,61 @@ public class GetBuckedLobby : MonoBehaviour
         }
 
     }
-    
+
+    public async void DeleteLobby()
+    {
+        if(joinedLobby != null)
+        {
+            try
+            {
+                await LobbyService.Instance.DeleteLobbyAsync(joinedLobby.Id);
+
+                joinedLobby = null;
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.LogWarning(e);
+            }
+            
+        }
+    }
+
+    public async void LeaveLobby()
+    {
+        if(joinedLobby != null)
+        {
+            try
+            {
+                await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, AuthenticationService.Instance.PlayerId);
+
+                joinedLobby = null;
+
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.LogWarning(e);
+            }
+        }
+        
+    }
+
+    public async void KickPlayer(string playerId)
+    {
+        if (IsLobbyHost())
+        {
+            try
+            {
+                await LobbyService.Instance.RemovePlayerAsync(joinedLobby.Id, playerId);
+
+            }
+            catch (LobbyServiceException e)
+            {
+                Debug.LogWarning(e);
+            }
+        }
+
+    }
+
     public Lobby GetLobby()
     {
         return joinedLobby;

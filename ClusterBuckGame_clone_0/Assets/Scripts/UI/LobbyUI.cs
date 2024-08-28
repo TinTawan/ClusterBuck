@@ -14,6 +14,7 @@ public class LobbyUI : MonoBehaviour
     {
         mainMenuButton.onClick.AddListener(() =>
         {
+            GetBuckedLobby.Instance.LeaveLobby();
             Loader.Load(Loader.Scene.MainMenu);
         });
         createLobbyButton.onClick.AddListener(() =>

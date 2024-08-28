@@ -48,6 +48,7 @@ public class PlayerCustomisationReady : NetworkBehaviour
 
         if(allClientsReady)
         {
+            GetBuckedLobby.Instance.DeleteLobby();
             Loader.LoadNetwork(Loader.Scene.GameScene);
         }
     }
