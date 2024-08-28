@@ -5084,7 +5084,7 @@ GameObject:
   - component: {fileID: 406351615}
   - component: {fileID: 406351614}
   m_Layer: 5
-  m_Name: BoxBehind
+  m_Name: Main
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

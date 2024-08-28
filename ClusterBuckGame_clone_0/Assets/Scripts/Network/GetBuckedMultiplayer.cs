@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine;
 using System;
 using Unity.Collections;
+using Unity.Services.Authentication;
 
 public class GetBuckedMultiplayer : NetworkBehaviour
 {
@@ -14,14 +15,15 @@ public class GetBuckedMultiplayer : NetworkBehaviour
     private const string PlayerPrefs_PlayerColour_Multiplayer = "PlayerColourMultiplayer";
 
 
-    private int maxPlayerCount = 4;
+    //private int maxPlayerCount = 4;
 
     public event EventHandler OnTryingToJoinGame;
     public event EventHandler OnFailedToJoinGame;
+    public event EventHandler OnPlayerDataListChanged;
 
     private NetworkList<PlayerData> network_PlayerDataList;
 
-    private List<Color> playerColourList;
+    //private List<Color> playerColourList;
 
     private string playerName, playerColourHex;
     private Color playerColourOut;
@@ -32,11 +34,17 @@ public class GetBuckedMultiplayer : NetworkBehaviour
         DontDestroyOnLoad(gameObject);
 
         network_PlayerDataList = new NetworkList<PlayerData>();
+        network_PlayerDataList.OnListChanged += PlayerDataList_OnListChanged;
 
         playerName = PlayerPrefs.GetString(PlayerPrefs_PlayerName_Multiplayer, "Deer " + UnityEngine.Random.Range(0, 1000));
-        //playerColourHex = PlayerPrefs.GetString(PlayerPrefs_PlayerColour_Multiplayer, "A4A4A4");
+        playerColourHex = PlayerPrefs.GetString(PlayerPrefs_PlayerColour_Multiplayer, "#A4A4A4");
 
 
+    }
+
+    private void PlayerDataList_OnListChanged(NetworkListEvent<PlayerData> changeEvent)
+    {
+        OnPlayerDataListChanged?.Invoke(this, EventArgs.Empty);   
     }
 
     public string GetPlayerName()
@@ -50,31 +58,51 @@ public class GetBuckedMultiplayer : NetworkBehaviour
         PlayerPrefs.SetString(PlayerPrefs_PlayerName_Multiplayer, inName);
     }
 
-    /*public Color GetPlayerColour()
+    public Color GetPlayerColour()
     {
         if (ColorUtility.TryParseHtmlString(playerColourHex, out playerColourOut))
-        {   
+        {
             return playerColourOut;
         }
 
         return default;
     }
+    public string GetPlayerColourByHex()
+    {
+        return playerColourHex;
+    }
     public void SetPlayerColourHex(Color inColour)
     {
-        playerColourHex = ColorUtility.ToHtmlStringRGB(inColour);
+        SetPlayerColourHex(ColorUtility.ToHtmlStringRGB(inColour));
+    }
+    public void SetPlayerColourHex(string inHexCode)
+    {
+        playerColourHex = $"#{inHexCode}";
 
-        PlayerPrefs.SetString(PlayerPrefs_PlayerColour_Multiplayer, ColorUtility.ToHtmlStringRGB(inColour));
-    }*/
-
+        PlayerPrefs.SetString(PlayerPrefs_PlayerColour_Multiplayer, inHexCode);
+    }
 
 
     public void StartHost()
     {
         NetworkManager.Singleton.ConnectionApprovalCallback += NetworkManager_ConnectionApprovalCallback;
         NetworkManager.Singleton.OnClientConnectedCallback += NetworkManager_OnClientConnectedCallback;
+        NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_OnClientDisconnectCallback;
         NetworkManager.Singleton.StartHost();
 
         
+    }
+
+    private void NetworkManager_OnClientDisconnectCallback(ulong clientId)
+    {
+        for (int i = 0; i < network_PlayerDataList.Count; i++)
+        {
+            PlayerData playerData = network_PlayerDataList[i];
+            if (playerData.clientId == clientId)
+            {
+                network_PlayerDataList.RemoveAt(i);
+            }
+        }
     }
 
     private void NetworkManager_OnClientConnectedCallback(ulong clientId)
@@ -82,11 +110,14 @@ public class GetBuckedMultiplayer : NetworkBehaviour
         network_PlayerDataList.Add(new PlayerData
         {
             clientId = clientId,
-            playerColour = new(165, 165, 165),
+            //playerColour = new(165, 165, 165),
+            playerHexColour = "#A4A4A4"
         });
 
         SetPlayerName_ServerRpc(GetPlayerName());
+        SetPlayerId_ServerRpc(AuthenticationService.Instance.PlayerId);
 
+        SetPlayerColourByHex(GetPlayerColourByHex());
     }
 
     private void NetworkManager_ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest connectionApprovalRequest, NetworkManager.ConnectionApprovalResponse connectionApprovalResponse)
@@ -120,6 +151,9 @@ public class GetBuckedMultiplayer : NetworkBehaviour
     private void NetworkManager_Client_OnClientConnectedCallback(ulong clientId)
     {
         SetPlayerName_ServerRpc(GetPlayerName());
+        SetPlayerId_ServerRpc(AuthenticationService.Instance.PlayerId);
+
+        SetPlayerColourByHex(GetPlayerColourByHex());
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -133,19 +167,32 @@ public class GetBuckedMultiplayer : NetworkBehaviour
         network_PlayerDataList[playerDataIndex] = playerData;
 
     }
+    [ServerRpc(RequireOwnership = false)]
+    private void SetPlayerId_ServerRpc(string inId, ServerRpcParams serverRpcParams = default)
+    {
+        int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
+
+        PlayerData playerData = network_PlayerDataList[playerDataIndex];
+        playerData.playerName = inId;
+
+        network_PlayerDataList[playerDataIndex] = playerData;
+
+    }
+
+
     private void NetworkManager_Client_OnClientDisconnectedCallback(ulong clientId)
     {
         OnFailedToJoinGame?.Invoke(this, EventArgs.Empty);
     }
 
-    public int GetMaxPlayerCount()
+    /*public int GetMaxPlayerCount()
     {
         return maxPlayerCount;
     }
     public void SetMaxPlayerCount(int inMaxPlayerCount)
     {
         maxPlayerCount = inMaxPlayerCount;
-    }
+    }*/
 
     public PlayerData GetPlayerData()
     {
@@ -183,7 +230,7 @@ public class GetBuckedMultiplayer : NetworkBehaviour
         return network_PlayerDataList[playerIndex];
     }
 
-    public Color GetPlayerColour(int colourId)
+    /*public Color GetPlayerColour(int colourId)
     {
         return playerColourList[colourId];
     }
@@ -191,15 +238,32 @@ public class GetBuckedMultiplayer : NetworkBehaviour
     public void AddPlayerColourToList(Color inColour)
     {
         playerColourList.Add(inColour);
-    }
+    }*/
 
-    public void ChangePlayerColour(Color inColour)
+    public void SetPlayerColourByHex(string hexCode)
     {
-        ChangePlayerColour_ServerRpc(inColour);
+        SetPlayerColourByHex_ServerRpc(hexCode);
 
     }
     [ServerRpc(RequireOwnership = false)]
-    private void ChangePlayerColour_ServerRpc(Color inColour, ServerRpcParams serverRpcParams = default)
+    private void SetPlayerColourByHex_ServerRpc(string hexCode, ServerRpcParams serverRpcParams = default)
+    {
+        int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
+
+        PlayerData playerData = network_PlayerDataList[playerDataIndex];
+        playerData.playerHexColour = $"#{hexCode}";
+
+        network_PlayerDataList[playerDataIndex] = playerData;
+    }
+
+
+    /*public void SetPlayerColour(Color inColour)
+    {
+        SetPlayerColour_ServerRpc(inColour);
+
+    }
+    [ServerRpc(RequireOwnership = false)]
+    private void SetPlayerColour_ServerRpc(Color inColour, ServerRpcParams serverRpcParams = default)
     {
         int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
 
@@ -207,7 +271,8 @@ public class GetBuckedMultiplayer : NetworkBehaviour
         playerData.playerColour = inColour;
 
         network_PlayerDataList[playerDataIndex] = playerData;
-    }
+
+    }*/
 
     /*public void ChangePlayerName(FixedString32Bytes inName)
     {
@@ -225,5 +290,5 @@ public class GetBuckedMultiplayer : NetworkBehaviour
     }*/
 
 
-    
+
 }

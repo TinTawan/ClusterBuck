@@ -4,7 +4,6 @@ using UnityEngine;
 using Unity.Netcode;
 using Unity.Collections;
 using TMPro;
-using Unity.VisualScripting;
 
 
 public class PlayerSettings : NetworkBehaviour
@@ -25,6 +24,8 @@ public class PlayerSettings : NetworkBehaviour
     //private string playerName;
 
     private NetworkVariable<PlayerData> network_PlayerData = new NetworkVariable<PlayerData>(new PlayerData(), NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Server);
+
+    private Color playerColour;
 
     private void Awake()
     {
@@ -56,10 +57,15 @@ public class PlayerSettings : NetworkBehaviour
         //playerMeshRend.material.color = playerColorList[(int)OwnerClientId];
 
         //PlayerData playerData = GetBuckedMultiplayer.Instance.GetPlayerDataFromClientId(OwnerClientId);
-        
+
 
         //playerName = playerData.playerName.ToString();
-        playerMeshRend.material.color = network_PlayerData.Value.playerColour;
+        //playerMeshRend.material.color = network_PlayerData.Value.playerColour;
+        string hex = network_PlayerData.Value.playerHexColour.ToString();
+        if(ColorUtility.TryParseHtmlString(hex, out playerColour))
+        {
+            playerMeshRend.material.color = playerColour;
+        }
 
 
 
